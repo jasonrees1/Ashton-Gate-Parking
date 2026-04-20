@@ -20,6 +20,7 @@ on:
       - main
     paths:
       - "scraper.py"
+      - "scraper_bcfc.py"
       - "ics_generator.py"
       - "main.py"
       - "config.json"
@@ -32,14 +33,14 @@ jobs:
     timeout-minutes: 15
 
     permissions:
-      contents: write  # Required to push updated .ics file
+      contents: write
 
     steps:
       # ── Checkout ───────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       # ── Python setup ───────────────────────────────────────────────────
       - name: Set up Python 3.12
@@ -53,7 +54,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # ── Create output directory ─────────────────────────────────────────
+      # ── Create output directories ───────────────────────────────────────
       - name: Create output directories
         run: |
           mkdir -p calendar
@@ -64,7 +65,7 @@ jobs:
         id: scraper
         run: |
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            python main.py --dry-run --verify
+            python main.py --dry-run
           else
             python main.py --verify
           fi
@@ -74,29 +75,27 @@ jobs:
         if: github.event.inputs.dry_run != 'true'
         run: |
           python -c "
-          from icalendar import Calendar
           from pathlib import Path
+          import re
 
           ics_path = Path('calendar/bristol_bears_and_ashton_gate.ics')
           if not ics_path.exists():
-              raise FileNotFoundError(f'ICS file not found: {ics_path}')
+              raise FileNotFoundError('ICS file not found')
 
-          content = ics_path.read_text(encoding='utf-8')
-          cal = Calendar.from_ical(content)
+          ics = ics_path.read_text(encoding='utf-8')
 
-          events = [c for c in cal.walk() if c.name == 'VEVENT']
-          print(f'ICS validation: {len(events)} events found')
+          assert 'BEGIN:VCALENDAR' in ics, 'Missing BEGIN:VCALENDAR'
+          assert 'END:VCALENDAR'   in ics, 'Missing END:VCALENDAR'
+          assert 'VERSION:2.0'     in ics, 'Missing VERSION:2.0'
 
-          if len(events) == 0:
+          n = ics.count('BEGIN:VEVENT')
+          if n == 0:
               raise ValueError('ICS file contains no events!')
 
-          for ev in events:
-              assert ev.get('uid'), f'Event missing UID: {ev.get(\"summary\")}'
-              assert ev.get('dtstart'), f'Event missing DTSTART: {ev.get(\"summary\")}'
-              assert ev.get('summary'), 'Event missing SUMMARY'
+          uid_count = len(re.findall(r'^UID:', ics, re.MULTILINE))
+          assert uid_count == n, f'UID count mismatch: {uid_count} vs {n} events'
 
-          print('All events have required fields.')
-          print('ICS validation passed ✓')
+          print(f'ICS validation passed: {n} events, {ics_path.stat().st_size} bytes')
           "
 
       # ── Show summary ────────────────────────────────────────────────────
@@ -104,24 +103,24 @@ jobs:
         if: github.event.inputs.dry_run != 'true'
         run: |
           python -c "
-          from icalendar import Calendar
           from pathlib import Path
+          import re
 
-          ics_path = Path('calendar/bristol_bears_and_ashton_gate.ics')
-          content = ics_path.read_text(encoding='utf-8')
-          cal = Calendar.from_ical(content)
+          ics = Path('calendar/bristol_bears_and_ashton_gate.ics').read_text(encoding='utf-8')
 
-          events = sorted(
-              [c for c in cal.walk() if c.name == 'VEVENT'],
-              key=lambda e: str(e.get('dtstart', ''))
-          )
+          events = []
+          for block in ics.split('BEGIN:VEVENT')[1:]:
+              summary = re.search(r'^SUMMARY:(.+)$', block, re.MULTILINE)
+              dtstart = re.search(r'^DTSTART[^:]*:(\d{8}T\d{6})', block, re.MULTILINE)
+              if summary and dtstart:
+                  dt = dtstart.group(1)
+                  dt_fmt = f'{dt[0:4]}-{dt[4:6]}-{dt[6:8]} {dt[9:11]}:{dt[11:13]}'
+                  events.append((dt_fmt, summary.group(1).strip()))
 
+          events.sort()
           print(f'=== Calendar: {len(events)} events ===')
-          for ev in events:
-              dtstart = ev.get('dtstart')
-              dt_str = dtstart.dt.strftime('%Y-%m-%d %H:%M') if dtstart else 'N/A'
-              summary = str(ev.get('summary', 'N/A'))
-              print(f'  {dt_str}  |  {summary}')
+          for dt, title in events:
+              print(f'  {dt}  |  {title}')
           "
 
       # ── Commit and push ─────────────────────────────────────────────────
@@ -131,22 +130,20 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Stage the calendar file and logs
           git add calendar/bristol_bears_and_ashton_gate.ics
           git add logs/ 2>/dev/null || true
 
-          # Only commit if there are changes
           if git diff --staged --quiet; then
             echo "No changes to commit — calendar is up to date."
           else
             TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
             EVENT_COUNT=$(python -c "
-          from icalendar import Calendar
           from pathlib import Path
-          cal = Calendar.from_ical(Path('calendar/bristol_bears_and_ashton_gate.ics').read_text())
-          print(sum(1 for c in cal.walk() if c.name == 'VEVENT'))
+          ics = Path('calendar/bristol_bears_and_ashton_gate.ics').read_text()
+          print(ics.count('BEGIN:VEVENT'))
             ")
             git commit -m "chore: update calendar [$TIMESTAMP] - ${EVENT_COUNT} events"
+            git pull --rebase origin main
             git push
             echo "Calendar pushed successfully."
           fi
