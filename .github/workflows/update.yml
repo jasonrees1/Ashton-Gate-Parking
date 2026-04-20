@@ -1,0 +1,169 @@
+name: Update Bristol Bears Calendar
+
+on:
+  schedule:
+    # Run daily at 06:00 UTC (07:00 BST / 06:00 GMT)
+    - cron: "0 6 * * *"
+
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (scrape only, do not commit)"
+        required: false
+        default: "false"
+        type: boolean
+
+  # Also run on pushes to main (for testing)
+  push:
+    branches:
+      - main
+    paths:
+      - "scraper.py"
+      - "ics_generator.py"
+      - "main.py"
+      - "config.json"
+      - "requirements.txt"
+
+jobs:
+  update-calendar:
+    name: Scrape & Update Calendar
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: write  # Required to push updated .ics file
+
+    steps:
+      # ── Checkout ───────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # ── Python setup ───────────────────────────────────────────────────
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # ── Create output directory ─────────────────────────────────────────
+      - name: Create output directories
+        run: |
+          mkdir -p calendar
+          mkdir -p logs
+
+      # ── Run scraper ────────────────────────────────────────────────────
+      - name: Run calendar scraper
+        id: scraper
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python main.py --dry-run --verify
+          else
+            python main.py --verify
+          fi
+
+      # ── Validate ICS ───────────────────────────────────────────────────
+      - name: Validate ICS file
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          python -c "
+          from icalendar import Calendar
+          from pathlib import Path
+
+          ics_path = Path('calendar/bristol_bears_and_ashton_gate.ics')
+          if not ics_path.exists():
+              raise FileNotFoundError(f'ICS file not found: {ics_path}')
+
+          content = ics_path.read_text(encoding='utf-8')
+          cal = Calendar.from_ical(content)
+
+          events = [c for c in cal.walk() if c.name == 'VEVENT']
+          print(f'ICS validation: {len(events)} events found')
+
+          if len(events) == 0:
+              raise ValueError('ICS file contains no events!')
+
+          for ev in events:
+              assert ev.get('uid'), f'Event missing UID: {ev.get(\"summary\")}'
+              assert ev.get('dtstart'), f'Event missing DTSTART: {ev.get(\"summary\")}'
+              assert ev.get('summary'), 'Event missing SUMMARY'
+
+          print('All events have required fields.')
+          print('ICS validation passed ✓')
+          "
+
+      # ── Show summary ────────────────────────────────────────────────────
+      - name: Show calendar summary
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          python -c "
+          from icalendar import Calendar
+          from pathlib import Path
+
+          ics_path = Path('calendar/bristol_bears_and_ashton_gate.ics')
+          content = ics_path.read_text(encoding='utf-8')
+          cal = Calendar.from_ical(content)
+
+          events = sorted(
+              [c for c in cal.walk() if c.name == 'VEVENT'],
+              key=lambda e: str(e.get('dtstart', ''))
+          )
+
+          print(f'=== Calendar: {len(events)} events ===')
+          for ev in events:
+              dtstart = ev.get('dtstart')
+              dt_str = dtstart.dt.strftime('%Y-%m-%d %H:%M') if dtstart else 'N/A'
+              summary = str(ev.get('summary', 'N/A'))
+              print(f'  {dt_str}  |  {summary}')
+          "
+
+      # ── Commit and push ─────────────────────────────────────────────────
+      - name: Commit and push updated calendar
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Stage the calendar file and logs
+          git add calendar/bristol_bears_and_ashton_gate.ics
+          git add logs/ 2>/dev/null || true
+
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit — calendar is up to date."
+          else
+            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+            EVENT_COUNT=$(python -c "
+          from icalendar import Calendar
+          from pathlib import Path
+          cal = Calendar.from_ical(Path('calendar/bristol_bears_and_ashton_gate.ics').read_text())
+          print(sum(1 for c in cal.walk() if c.name == 'VEVENT'))
+            ")
+            git commit -m "chore: update calendar [$TIMESTAMP] - ${EVENT_COUNT} events"
+            git push
+            echo "Calendar pushed successfully."
+          fi
+
+      # ── Upload artifact ─────────────────────────────────────────────────
+      - name: Upload ICS as workflow artifact
+        if: always() && github.event.inputs.dry_run != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bristol-bears-calendar-${{ github.run_number }}
+          path: calendar/bristol_bears_and_ashton_gate.ics
+          retention-days: 30
+
+      # ── On failure: notify ─────────────────────────────────────────────
+      - name: Handle failure
+        if: failure()
+        run: |
+          echo "::error::Calendar update failed! Check the logs above."
+          echo "The existing calendar file has NOT been modified."
+          exit 1

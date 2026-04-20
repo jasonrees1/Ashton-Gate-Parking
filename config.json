@@ -1,0 +1,55 @@
+{
+  "sources": {
+    "bristol_bears": {
+      "primary": {
+        "name": "Premiership Rugby",
+        "url": "https://www.premiershiprugby.com/clubs/bristol-bears/fixtures-results",
+        "type": "html_scrape",
+        "notes": "Official Premiership Rugby site - public HTML, stable structure"
+      },
+      "fallback": {
+        "name": "Ultimate Rugby",
+        "url": "https://www.ultimaterugby.com/bristol/matches",
+        "type": "html_scrape",
+        "notes": "Secondary source with reliable fixture data"
+      },
+      "team_name": "Bristol Bears",
+      "competitions": [
+        "Gallagher Premiership",
+        "Premiership Rugby Cup",
+        "Investec Champions Cup"
+      ]
+    },
+    "ashton_gate": {
+      "primary": {
+        "name": "Ashton Gate Stadium Official",
+        "url": "https://www.ashtongatestadium.co.uk/whatson/",
+        "type": "html_scrape",
+        "notes": "Official stadium What's On page - WordPress, clean structured HTML"
+      },
+      "venue": "Ashton Gate Stadium",
+      "address": "Ashton Road, Bristol, BS3 2EJ"
+    }
+  },
+  "output": {
+    "ics_file": "calendar/bristol_bears_and_ashton_gate.ics",
+    "calendar_name": "Bristol Bears & Ashton Gate Events",
+    "calendar_description": "Bristol Bears rugby fixtures and Ashton Gate Stadium events - auto-updated daily"
+  },
+  "timezone": "Europe/London",
+  "default_match_duration_minutes": 110,
+  "default_event_duration_minutes": 120,
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    "file": "logs/scraper.log",
+    "max_bytes": 5242880,
+    "backup_count": 3
+  },
+  "http": {
+    "timeout_seconds": 30,
+    "retry_attempts": 3,
+    "retry_delay_seconds": 5,
+    "user_agent": "Mozilla/5.0 (compatible; BristolBearsCalendar/1.0; +https://github.com)"
+  }
+}

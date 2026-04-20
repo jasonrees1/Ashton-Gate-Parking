@@ -1,0 +1,35 @@
+### Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.env
+.venv
+env/
+venv/
+
+### Logs (keep directory, ignore content)
+logs/*.log
+logs/*.log.*
+
+### Test output
+calendar/test_output.ics
+
+### OS
+.DS_Store
+Thumbs.db
+
+### IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+### The actual calendar IS tracked (it's the output artefact)
+!calendar/bristol_bears_and_ashton_gate.ics
