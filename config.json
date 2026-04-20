@@ -29,12 +29,36 @@
       },
       "venue": "Ashton Gate Stadium",
       "address": "Ashton Road, Bristol, BS3 2EJ"
+    },
+    "bristol_city": {
+      "primary": {
+        "name": "BBC Sport",
+        "url": "https://www.bbc.co.uk/sport/football/teams/bristol-city/fixtures",
+        "type": "html_scrape",
+        "notes": "Public HTML, no login, stable 10+ years, real-time kick-off updates"
+      },
+      "fallback": {
+        "name": "Soccerway",
+        "url": "https://uk.soccerway.com/teams/england/bristol-city-fc/660/matches/",
+        "type": "html_scrape",
+        "notes": "Independent aggregator, different code path = true redundancy"
+      },
+      "team_name": "Bristol City FC",
+      "home_only": true,
+      "venue": "Ashton Gate Stadium",
+      "address": "Ashton Road, Bristol, BS3 2EJ",
+      "competitions": [
+        "EFL Championship",
+        "FA Cup",
+        "Carabao Cup (EFL Cup)",
+        "EFL Championship Play-Off"
+      ]
     }
   },
   "output": {
     "ics_file": "calendar/bristol_bears_and_ashton_gate.ics",
-    "calendar_name": "Bristol Bears & Ashton Gate Events",
-    "calendar_description": "Bristol Bears rugby fixtures and Ashton Gate Stadium events - auto-updated daily"
+    "calendar_name": "Bristol Bears, Bristol City & Ashton Gate Events",
+    "calendar_description": "Bristol Bears rugby fixtures, Bristol City FC home matches and Ashton Gate Stadium events - auto-updated daily"
   },
   "timezone": "Europe/London",
   "default_match_duration_minutes": 110,
@@ -51,5 +75,6 @@
     "retry_attempts": 3,
     "retry_delay_seconds": 5,
     "user_agent": "Mozilla/5.0 (compatible; BristolBearsCalendar/1.0; +https://github.com)"
-  }
+  },
+  "default_match_duration_minutes_football": 115
 }
