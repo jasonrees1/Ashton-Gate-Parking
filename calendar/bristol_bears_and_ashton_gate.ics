@@ -29,7 +29,7 @@ END:VTIMEZONE
 BEGIN:VEVENT
 UID:known-bristol-bears-vs-gloucester-rugby-20260417T194500@bristol-bears-c
  alendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260417T194500
 DTEND;TZID=Europe/London:20260417T213500
 SUMMARY:Bristol Bears vs Gloucester Rugby
@@ -46,9 +46,29 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
+UID:ag-april-2026-20260425T000000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
+DTSTART;TZID=Europe/London:20260425T000000
+DTEND;TZID=Europe/London:20260425T020000
+SUMMARY:APRIL 2026
+DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nAPRIL 2026\nDate: 25 April
+  2026\n\nThe Red Roses are coming ‘home’ to the West Country and more
+  than 90% of the tickets have been sold to see the World Champions.  Engl
+ and will return to Ashton Gate in the 2026 Guinness Women’s Six Nations
+  when they play their Round Three game against Wales on Saturday\, April 2
+ 5th (2.15pm). We are well on the way...\n\nMore info: https://www.ashtong
+ atestadium.co.uk/whatson/
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.ashtongatestadium.co.uk/event/red-roses-vs-wales-guinness-w
+ omens-six-nations-round-3/
+CATEGORIES:Ashton Gate,Stadium Event,Event
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
 UID:ag-known-red-roses-vs-wales---women-s-six-nations-20260425T141500@brist
  ol-bears-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260425T141500
 DTEND;TZID=Europe/London:20260425T161500
 SUMMARY:[Ashton Gate] Red Roses vs Wales | Women's Six Nations
@@ -64,7 +84,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:known-newcastle-red-bulls-vs-bristol-bears-20260425T150000@bristol-bear
  s-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260425T150000
 DTEND;TZID=Europe/London:20260425T165000
 SUMMARY:Newcastle Red Bulls vs Bristol Bears
@@ -84,7 +104,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:ag-known-national-apprenticeship---education-even-20260427T090000@brist
  ol-bears-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260427T090000
 DTEND;TZID=Europe/London:20260427T110000
 SUMMARY:[Ashton Gate] National Apprenticeship & Education Event – Skills 
@@ -99,8 +119,27 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
+UID:ag-may-2026-20260503T000000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
+DTSTART;TZID=Europe/London:20260503T000000
+DTEND;TZID=Europe/London:20260503T020000
+SUMMARY:MAY 2026
+DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nMAY 2026\nDate: 03 May 202
+ 6\n\nCard Market Bristol returns in May! Join us on 3rd May for a day of a
+ ll things trading cards! From Pokémon to Disney Lorcana and Magic: The G
+ athering to Yu-Gi-Oh! there’s something for everyone at Card Market Even
+ ts! Visit our incredible traders to buy\, sell or trade your trading cards
+ \, visit the trading zone to trade...\n\nMore info: https://www.ashtongate
+ stadium.co.uk/whatson/
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.ashtongatestadium.co.uk/event/card-market/
+CATEGORIES:Ashton Gate,Stadium Event,Event
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
 UID:ag-known-card-market-bristol-20260503T100000@bristol-bears-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260503T100000
 DTEND;TZID=Europe/London:20260503T120000
 SUMMARY:[Ashton Gate] Card Market Bristol
@@ -113,25 +152,25 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:known-bristol-bears-vs-saracens-20260509T150000@bristol-bears-calendar
-DTSTAMP:20260419T182622Z
+UID:ur-bristol-bears-vs-saracens-20260509T150000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260509T150000
 DTEND;TZID=Europe/London:20260509T165000
 SUMMARY:Bristol Bears vs Saracens
-DESCRIPTION:🏉 Gallagher Premiership\n\nBristol Bears vs Saracens\nKick-o
- ff: Saturday 09 May 2026\, 15:00 🏠\n\nBristol Bears — Gallagher Premi
- ership\nTickets: https://www.bristolbearsrugby.com/tickets/\nFixtures: htt
- ps://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results/
+DESCRIPTION:🏉 Rugby\n\nBristol Bears vs Saracens\nKick-off: Saturday 09 
+ May 2026\, 15:00 🏠\n\nBristol Bears — Gallagher Premiership\nTickets:
+  https://www.bristolbearsrugby.com/tickets/\nFixtures: https://www.bristol
+ bearsrugby.com/bears-men/first-team/fixtures-results/
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results
- /
-CATEGORIES:Rugby,Bristol Bears,Gallagher Premiership
+URL:https://www.ultimaterugby.com/match/bristol-bears-vs-saracens-at-ashton
+ -gate-9th-may-2026/98574
+CATEGORIES:Rugby,Bristol Bears,Rugby
 STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:ag-known-play-on-the-pitch-20260514T100000@bristol-bears-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260514T100000
 DTEND;TZID=Europe/London:20260514T120000
 SUMMARY:[Ashton Gate] Play on the Pitch
@@ -146,7 +185,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:known-northampton-saints-vs-bristol-bears-20260516T150000@bristol-bears
  -calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260516T150000
 DTEND;TZID=Europe/London:20260516T165000
 SUMMARY:Northampton Saints vs Bristol Bears
@@ -165,7 +204,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:ag-known-digital-nrg--how-to-grow---scale-a-brand-20260521T090000@brist
  ol-bears-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260521T090000
 DTEND;TZID=Europe/London:20260521T110000
 SUMMARY:[Ashton Gate] Digital NRG: How to Grow & Scale a Brand in 2026
@@ -180,7 +219,7 @@ SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:ag-known-gala-dinner-2026-20260521T183000@bristol-bears-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260521T183000
 DTEND;TZID=Europe/London:20260521T203000
 SUMMARY:[Ashton Gate] Gala Dinner 2026
@@ -193,27 +232,46 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:known-bristol-bears-vs-bath-rugby-20260530T150000@bristol-bears-calenda
- r
-DTSTAMP:20260419T182622Z
+UID:ag-april-2026-20260526T000000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
+DTSTART;TZID=Europe/London:20260526T000000
+DTEND;TZID=Europe/London:20260526T020000
+SUMMARY:APRIL 2026
+DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nAPRIL 2026\nDate: 26 May 2
+ 026\n\nThe Red Roses are coming ‘home’ to the West Country and more t
+ han 90% of the tickets have been sold to see the World Champions.  Englan
+ d will return to Ashton Gate in the 2026 Guinness Women’s Six Nations w
+ hen they play their Round Three game against Wales on Saturday\, April 25t
+ h (2.15pm). We are well on the way...\n\nMore info: https://www.ashtongat
+ estadium.co.uk/whatson/
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.ashtongatestadium.co.uk/event/red-roses-vs-wales-guinness-w
+ omens-six-nations-round-3/
+CATEGORIES:Ashton Gate,Stadium Event,Event
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:ur-bristol-bears-vs-bath-rugby-20260530T150000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260530T150000
 DTEND;TZID=Europe/London:20260530T165000
 SUMMARY:Bristol Bears vs Bath Rugby
-DESCRIPTION:🏉 Gallagher Premiership\n\nBristol Bears vs Bath Rugby\nKick
- -off: Saturday 30 May 2026\, 15:00 🏠\n\nBristol Bears — Gallagher Pre
- miership\nTickets: https://www.bristolbearsrugby.com/tickets/\nFixtures: h
- ttps://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results/
+DESCRIPTION:🏉 Rugby\n\nBristol Bears vs Bath Rugby\nKick-off: Saturday 3
+ 0 May 2026\, 15:00 🏠\n\nBristol Bears — Gallagher Premiership\nTicket
+ s: https://www.bristolbearsrugby.com/tickets/\nFixtures: https://www.brist
+ olbearsrugby.com/bears-men/first-team/fixtures-results/
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results
- /
-CATEGORIES:Rugby,Bristol Bears,Gallagher Premiership
+URL:https://www.ultimaterugby.com/match/bristol-bears-vs-bath-rugby-at-asht
+ on-gate-30th-may-2026/98585
+CATEGORIES:Rugby,Bristol Bears,Rugby
 STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:known-sale-sharks-vs-bristol-bears-20260606T140000@bristol-bears-calend
  ar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260606T140000
 DTEND;TZID=Europe/London:20260606T155000
 SUMMARY:Sale Sharks vs Bristol Bears
@@ -230,8 +288,27 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
+UID:ag-june-2026-20260614T000000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
+DTSTART;TZID=Europe/London:20260614T000000
+DTEND;TZID=Europe/London:20260614T020000
+SUMMARY:JUNE 2026
+DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nJUNE 2026\nDate: 14 June 2
+ 026\n\nFounded in 2017 the Bristol Guitar Show is the largest guitar eve
+ nt in the Southwest of the UK! Organiser Neil Cable has been involved with
+  the show since it’s conception and has seen it grow to a must attend UK
+  event for guitar enthusiasts and sellers alike. Everything about this sho
+ w is top quality which starts with...\n\nMore info: https://www.ashtongate
+ stadium.co.uk/whatson/
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.ashtongatestadium.co.uk/event/bristol-guitar-show/
+CATEGORIES:Ashton Gate,Stadium Event,Event
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
 UID:ag-known-bristol-guitar-show-20260614T090000@bristol-bears-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260614T090000
 DTEND;TZID=Europe/London:20260614T110000
 SUMMARY:[Ashton Gate] Bristol Guitar Show
@@ -244,9 +321,29 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
+UID:ag-july-2026-20260704T000000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
+DTSTART;TZID=Europe/London:20260704T000000
+DTEND;TZID=Europe/London:20260704T020000
+SUMMARY:JULY 2026
+DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nJULY 2026\nDate: 04 July 2
+ 026\n\nWe are returning to Ashton Gate Stadium for the 10th Bristol Tatto
+ o Convention! The artist line up just gets stronger and stronger\, this ye
+ ar sees over 250 artists including more than 60 new artists making their B
+ ristol debuts as well as the return of many of our favourites. Go to the w
+ ebsite for full artist list....\n\nMore info: https://www.ashtongatestadiu
+ m.co.uk/whatson/
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.ashtongatestadium.co.uk/event/bristol-tattoo-convention-202
+ 6/
+CATEGORIES:Ashton Gate,Stadium Event,Event
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
 UID:ag-known-bristol-tattoo-convention-2026-20260704T110000@bristol-bears-c
  alendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260704T110000
 DTEND;TZID=Europe/London:20260704T130000
 SUMMARY:[Ashton Gate] Bristol Tattoo Convention 2026
@@ -261,7 +358,7 @@ SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:ag-known-break-the-cycle-2026-20260726T080000@bristol-bears-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20260726T080000
 DTEND;TZID=Europe/London:20260726T100000
 SUMMARY:[Ashton Gate] Break The Cycle 2026
@@ -274,8 +371,46 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
+UID:ag-september-2026-20260917T000000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
+DTSTART;TZID=Europe/London:20260917T000000
+DTEND;TZID=Europe/London:20260917T020000
+SUMMARY:SEPTEMBER 2026
+DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nSEPTEMBER 2026\nDate: 17 S
+ eptember 2026\n\nThe Aesthetics & Beauty Education (ABE) Expo is a leading
+  industry event that brings together the very best of medical aesthetics a
+ nd beauty education under one roof. Designed for professionals who are pas
+ sionate about advancing their knowledge and growing their businesses\, ABE
+  Expo offers a dynamic platform to learn\, connect\, and discover the futu
+ re of...\n\nMore info: https://www.ashtongatestadium.co.uk/whatson/
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.ashtongatestadium.co.uk/event/abe-expo/
+CATEGORIES:Ashton Gate,Stadium Event,Event
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:ag-october-2026-20261008T000000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
+DTSTART;TZID=Europe/London:20261008T000000
+DTEND;TZID=Europe/London:20261008T020000
+SUMMARY:OCTOBER 2026
+DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nOCTOBER 2026\nDate: 08 Oct
+ ober 2026\n\nBack for 2026\, Selling South is taking over Ashton Gate for 
+ a day dedicated to one thing: helping you and your team sell more. It’ll
+  be a high-energy\, fluff-free day\, with a packed roster of expert sales 
+ training from industry-leading speakers\, networking with other sales prof
+ essionals\, and actionable strategies you can put into play straight...\n\
+ nMore info: https://www.ashtongatestadium.co.uk/whatson/
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.ashtongatestadium.co.uk/event/selling-south-2026/
+CATEGORIES:Ashton Gate,Stadium Event,Event
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
 UID:ag-known-itshowcase-bristol-20261020T100000@bristol-bears-calendar
-DTSTAMP:20260419T182622Z
+DTSTAMP:20260420T103516Z
 DTSTART;TZID=Europe/London:20261020T100000
 DTEND;TZID=Europe/London:20261020T120000
 SUMMARY:[Ashton Gate] itSHOWCASE Bristol
@@ -283,6 +418,46 @@ DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nitSHOWCASE Bristol\nDate:
  20 Oct 2026\n\nMore info: https://www.ashtongatestadium.co.uk/whatson/
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.ashtongatestadium.co.uk/whatson/
+CATEGORIES:Ashton Gate,Stadium Event,Event
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:ag-november-2026-20261128T000000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
+DTSTART;TZID=Europe/London:20261128T000000
+DTEND;TZID=Europe/London:20261128T020000
+SUMMARY:NOVEMBER 2026
+DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nNOVEMBER 2026\nDate: 28 No
+ vember 2026\n\nCelebrate Christmas with the King of Pop in this electrifyi
+ ng tribute show! 🎄✨ Featuring incredible attention to detail\, outsta
+ nding talent\, and unstoppable energy\, this spectacular tribute brings Mi
+ chael Jackson’s legendary hits to life with live vocals\, iconic dance m
+ oves\, and world-class showmanship. From the moonwalk to every unforgettab
+ le “Hee-hee!”\, this UK touring show is packed...\n\nMore info: https:
+ //www.ashtongatestadium.co.uk/whatson/
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.ashtongatestadium.co.uk/event/michael-jackson-tribute-night
+ -nov-28/
+CATEGORIES:Ashton Gate,Stadium Event,Event
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:ag-december-2026-20261205T000000@bristol-bears-calendar
+DTSTAMP:20260420T103516Z
+DTSTART;TZID=Europe/London:20261205T000000
+DTEND;TZID=Europe/London:20261205T020000
+SUMMARY:DECEMBER 2026
+DESCRIPTION:🏟️ Ashton Gate Stadium Event\n\nDECEMBER 2026\nDate: 05 De
+ cember 2026\n\nGet ready to dance the night away at our shared Christmas p
+ arty spectacular — The Decades Show! 🎄✨ Travel through the ultimate
+  party eras as we bring you the biggest hits from the 70s\, 80s and 90s. S
+ ing and dance along to floor-filling classics from Bananarama\, Madonna\, 
+ Yazz\, Cyndi Lauper\, the Spice Girls\, M People\,...\n\nMore info: https:
+ //www.ashtongatestadium.co.uk/whatson/
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.ashtongatestadium.co.uk/event/the-decades-show/
 CATEGORIES:Ashton Gate,Stadium Event,Event
 STATUS:CONFIRMED
 SEQUENCE:0
