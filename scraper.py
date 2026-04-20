@@ -930,26 +930,35 @@ def merge_and_deduplicate(event_lists: list[list[CalendarEvent]]) -> list[Calend
 def run() -> list[CalendarEvent]:
     """Run all scrapers and return merged, deduplicated event list."""
     logger.info("=" * 60)
-    logger.info("Bristol Bears & Ashton Gate Calendar Scraper - Starting")
+    logger.info("Bristol Bears, Bristol City & Ashton Gate Calendar Scraper")
     logger.info("=" * 60)
 
     # --- Bristol Bears fixtures ---
     logger.info("Scraping Bristol Bears fixtures...")
     bears_events = scrape_prem_rugby_fixtures()
-
-    # Merge with hardcoded known fixtures for reliability
     known_bears = get_known_fixtures()
-    logger.info(f"Known baseline fixtures: {len(known_bears)}")
+    logger.info(f"Bristol Bears baseline: {len(known_bears)} fixtures")
 
     # --- Ashton Gate events ---
     logger.info("Scraping Ashton Gate Stadium events...")
     ag_events = scrape_ashton_gate_events()
-
-    # Known Ashton Gate events for reliability
     known_ag = get_known_ashton_gate_events()
 
+    # --- Bristol City FC home fixtures ---
+    logger.info("Scraping Bristol City FC home fixtures...")
+    try:
+        from scraper_bcfc import scrape_bristol_city_home_fixtures
+        bcfc_events = scrape_bristol_city_home_fixtures()
+    except Exception as e:
+        logger.error(f"Bristol City scraper failed: {e}")
+        bcfc_events = []
+
     # Merge all sources
-    all_events = merge_and_deduplicate([bears_events, known_bears, ag_events, known_ag])
+    all_events = merge_and_deduplicate([
+        bears_events, known_bears,
+        ag_events, known_ag,
+        bcfc_events,
+    ])
 
     logger.info(f"Total events in calendar: {len(all_events)}")
     for ev in all_events:
