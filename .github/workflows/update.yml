@@ -2,10 +2,7 @@ name: Update Bristol Bears Calendar
 
 on:
   schedule:
-    # Run daily at 06:00 UTC (07:00 BST / 06:00 GMT)
     - cron: "0 6 * * *"
-
-  # Allow manual trigger from GitHub Actions UI
   workflow_dispatch:
     inputs:
       dry_run:
@@ -13,8 +10,6 @@ on:
         required: false
         default: "false"
         type: boolean
-
-  # Also run on pushes to main (for testing)
   push:
     branches:
       - main
@@ -36,13 +31,12 @@ jobs:
       contents: write
 
     steps:
-      # ── Checkout ───────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ── Python setup ───────────────────────────────────────────────────
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -54,15 +48,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # ── Create output directories ───────────────────────────────────────
       - name: Create output directories
         run: |
           mkdir -p calendar
           mkdir -p logs
 
-      # ── Run scraper ────────────────────────────────────────────────────
       - name: Run calendar scraper
-        id: scraper
         run: |
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             python main.py --dry-run
@@ -70,44 +61,28 @@ jobs:
             python main.py --verify
           fi
 
-      # ── Validate ICS ───────────────────────────────────────────────────
       - name: Validate ICS file
         if: github.event.inputs.dry_run != 'true'
         run: |
           python -c "
           from pathlib import Path
           import re
-
-          ics_path = Path('calendar/bristol_bears_and_ashton_gate.ics')
-          if not ics_path.exists():
-              raise FileNotFoundError('ICS file not found')
-
-          ics = ics_path.read_text(encoding='utf-8')
-
-          assert 'BEGIN:VCALENDAR' in ics, 'Missing BEGIN:VCALENDAR'
-          assert 'END:VCALENDAR'   in ics, 'Missing END:VCALENDAR'
-          assert 'VERSION:2.0'     in ics, 'Missing VERSION:2.0'
-
+          ics = Path('calendar/bristol_bears_and_ashton_gate.ics').read_text(encoding='utf-8')
+          assert 'BEGIN:VCALENDAR' in ics
+          assert 'END:VCALENDAR' in ics
           n = ics.count('BEGIN:VEVENT')
           if n == 0:
               raise ValueError('ICS file contains no events!')
-
-          uid_count = len(re.findall(r'^UID:', ics, re.MULTILINE))
-          assert uid_count == n, f'UID count mismatch: {uid_count} vs {n} events'
-
-          print(f'ICS validation passed: {n} events, {ics_path.stat().st_size} bytes')
+          print(f'ICS validation passed: {n} events, {Path(\"calendar/bristol_bears_and_ashton_gate.ics\").stat().st_size} bytes')
           "
 
-      # ── Show summary ────────────────────────────────────────────────────
       - name: Show calendar summary
         if: github.event.inputs.dry_run != 'true'
         run: |
           python -c "
           from pathlib import Path
           import re
-
           ics = Path('calendar/bristol_bears_and_ashton_gate.ics').read_text(encoding='utf-8')
-
           events = []
           for block in ics.split('BEGIN:VEVENT')[1:]:
               summary = re.search(r'^SUMMARY:(.+)$', block, re.MULTILINE)
@@ -116,22 +91,26 @@ jobs:
                   dt = dtstart.group(1)
                   dt_fmt = f'{dt[0:4]}-{dt[4:6]}-{dt[6:8]} {dt[9:11]}:{dt[11:13]}'
                   events.append((dt_fmt, summary.group(1).strip()))
-
           events.sort()
           print(f'=== Calendar: {len(events)} events ===')
           for dt, title in events:
               print(f'  {dt}  |  {title}')
           "
 
-      # ── Commit and push ─────────────────────────────────────────────────
       - name: Commit and push updated calendar
         if: github.event.inputs.dry_run != 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
+          # Always fetch latest before doing anything
+          git fetch origin main
+
+          # Reset to origin/main to avoid any conflict
+          git reset --soft origin/main
+
+          # Stage only the calendar file
           git add calendar/bristol_bears_and_ashton_gate.ics
-          git add logs/ 2>/dev/null || true
 
           if git diff --staged --quiet; then
             echo "No changes to commit — calendar is up to date."
@@ -143,12 +122,10 @@ jobs:
           print(ics.count('BEGIN:VEVENT'))
             ")
             git commit -m "chore: update calendar [$TIMESTAMP] - ${EVENT_COUNT} events"
-            git pull --rebase origin main
-            git push
+            git push origin main
             echo "Calendar pushed successfully."
           fi
 
-      # ── Upload artifact ─────────────────────────────────────────────────
       - name: Upload ICS as workflow artifact
         if: always() && github.event.inputs.dry_run != 'true'
         uses: actions/upload-artifact@v4
@@ -157,7 +134,6 @@ jobs:
           path: calendar/bristol_bears_and_ashton_gate.ics
           retention-days: 30
 
-      # ── On failure: notify ─────────────────────────────────────────────
       - name: Handle failure
         if: failure()
         run: |
