@@ -618,7 +618,7 @@ return events
 KNOWN_ASHTON_GATE_EVENTS = [
 # From research of ashtongatestadium.co.uk/whatson/ on 2026-04-19
 ("25 Apr 2026", "14:15", "Red Roses vs Wales | Women's Six Nations", "Sport"),
-("27 Apr 2026", "09:00", "National Apprenticeship & Education Event – Skills Show Southwest",
+("27 Apr 2026", "09:00", "National Apprenticeship & Education Event - Skills Show Southwest", "Event"),
 ("03 May 2026", "10:00", "Card Market Bristol", "Event"),
 ("14 May 2026", "10:00", "Play on the Pitch", "Event"),
 ("21 May 2026", "09:00", "Digital NRG: How to Grow & Scale a Brand in 2026", "Event"),
