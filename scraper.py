@@ -404,15 +404,15 @@ KNOWN_FIXTURES = [
 ("06 Jun 2026", "14:00", "Sale Sharks", "Bristol Bears", "Gallagher Premiership"),
 ]
 KNOWN_VENUES = {
-'Newcastle Red Bulls": "Kingston Park, Brunton Road, Kenton Bank Foot, Newcastle, NE13 8AF',
-'Northampton Saints": "cinch Stadium at Franklin's Gardens, Weedon Road, Northampton, NN5
-'Bath Rugby": "The Rec, Pulteney Mews, Bath, BA2 4DS',
-'Sale Sharks": "Salford Community Stadium, 1 Stadium Way, Eccles, Salford, M30 7EY',
-'Exeter Chiefs": "Sandy Park, Exeter, EX2 7NN',
-'Gloucester Rugby": "Kingsholm Stadium, Kingsholm Road, Gloucester, GL1 3AX',
-'Harlequins": "The Stoop, Langhorn Drive, Twickenham, TW2 7SX',
-'Leicester Tigers": "Welford Road Stadium, Aylestone Road, Leicester, LE2 7TR',
-'Saracens": "StoneX Stadium, Greenlands Lane, London, NW4 1RL',
+"Newcastle Red Bulls": "Kingston Park, Brunton Road, Kenton Bank Foot, Newcastle, NE13 8AF",
+"Northampton Saints": "cinch Stadium at Franklin's Gardens, Weedon Road, Northampton, NN5
+"Bath Rugby": "The Rec, Pulteney Mews, Bath, BA2 4DS",
+"Sale Sharks": "Salford Community Stadium, 1 Stadium Way, Eccles, Salford, M30 7EY",
+"Exeter Chiefs": "Sandy Park, Exeter, EX2 7NN",
+"Gloucester Rugby": "Kingsholm Stadium, Kingsholm Road, Gloucester, GL1 3AX",
+"Harlequins": "The Stoop, Langhorn Drive, Twickenham, TW2 7SX",
+"Leicester Tigers": "Welford Road Stadium, Aylestone Road, Leicester, LE2 7TR",
+"Saracens": "StoneX Stadium, Greenlands Lane, London, NW4 1RL",
 }
 def get_known_fixtures() -> list[CalendarEvent]:
 events = []
