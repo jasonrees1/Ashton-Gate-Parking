@@ -39,21 +39,21 @@ from dateutil import parser as dateutil_parser
 # —————————————————————————
 
 BASE_DIR = Path(*file*).resolve().parent
-CONFIG_PATH = BASE_DIR / “config.json”
+CONFIG_PATH = BASE_DIR / "config.json”
 
 with open(CONFIG_PATH) as f:
 CONFIG = json.load(f)
 
 # Logging
 
-log_cfg = CONFIG[“logging”]
-log_dir = BASE_DIR / Path(log_cfg[“file”]).parent
+log_cfg = CONFIG["logging”]
+log_dir = BASE_DIR / Path(log_cfg["file”]).parent
 log_dir.mkdir(parents=True, exist_ok=True)
 
-logger = logging.getLogger(“bristol_calendar”)
-logger.setLevel(getattr(logging, log_cfg[“level”]))
+logger = logging.getLogger("bristol_calendar”)
+logger.setLevel(getattr(logging, log_cfg["level”]))
 
-formatter = logging.Formatter(log_cfg[“format”])
+formatter = logging.Formatter(log_cfg["format”])
 
 # Console handler
 
@@ -64,15 +64,15 @@ logger.addHandler(ch)
 # Rotating file handler
 
 fh = logging.handlers.RotatingFileHandler(
-BASE_DIR / log_cfg[“file”],
-maxBytes=log_cfg[“max_bytes”],
-backupCount=log_cfg[“backup_count”],
+BASE_DIR / log_cfg["file”],
+maxBytes=log_cfg["max_bytes”],
+backupCount=log_cfg["backup_count”],
 )
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
-TZ = ZoneInfo(CONFIG[“timezone”])
-HTTP_CFG = CONFIG[“http”]
+TZ = ZoneInfo(CONFIG["timezone”])
+HTTP_CFG = CONFIG["http”]
 
 # —————————————————————————
 
@@ -86,11 +86,11 @@ uid: str
 title: str
 start: datetime
 end: datetime
-location: str = “”
-description: str = “”
+location: str = "”
+description: str = "”
 categories: list = field(default_factory=list)
-url: str = “”
-status: str = “CONFIRMED”  # CONFIRMED, TENTATIVE, CANCELLED
+url: str = "”
+status: str = "CONFIRMED”  # CONFIRMED, TENTATIVE, CANCELLED
 
 # —————————————————————————
 
@@ -100,25 +100,25 @@ status: str = “CONFIRMED”  # CONFIRMED, TENTATIVE, CANCELLED
 
 SESSION = requests.Session()
 SESSION.headers.update({
-“User-Agent”: HTTP_CFG[“user_agent”],
-“Accept”: “text/html,application/xhtml+xml,application/xml;q=0.9,/;q=0.8”,
-“Accept-Language”: “en-GB,en;q=0.9”,
+"User-Agent”: HTTP_CFG["user_agent”],
+"Accept”: "text/html,application/xhtml+xml,application/xml;q=0.9,/;q=0.8”,
+"Accept-Language”: "en-GB,en;q=0.9”,
 })
 
 def fetch_page(url: str, retries: int = None) -> Optional[BeautifulSoup]:
-“”“Fetch a URL and return a BeautifulSoup object, with retries.”””
+"”"Fetch a URL and return a BeautifulSoup object, with retries.”””
 if retries is None:
-retries = HTTP_CFG[“retry_attempts”]
+retries = HTTP_CFG["retry_attempts”]
 for attempt in range(1, retries + 1):
 try:
 logger.info(f”Fetching [{attempt}/{retries}]: {url}”)
-resp = SESSION.get(url, timeout=HTTP_CFG[“timeout_seconds”])
+resp = SESSION.get(url, timeout=HTTP_CFG["timeout_seconds”])
 resp.raise_for_status()
-return BeautifulSoup(resp.text, “lxml”)
+return BeautifulSoup(resp.text, "lxml”)
 except requests.RequestException as e:
 logger.warning(f”Request failed (attempt {attempt}): {e}”)
 if attempt < retries:
-time.sleep(HTTP_CFG[“retry_delay_seconds”])
+time.sleep(HTTP_CFG["retry_delay_seconds”])
 logger.error(f”All {retries} attempts failed for {url}”)
 return None
 
@@ -128,15 +128,15 @@ return None
 
 # —————————————————————————
 
-def parse_uk_datetime(date_str: str, time_str: str = “”) -> Optional[datetime]:
-“””
+def parse_uk_datetime(date_str: str, time_str: str = "”) -> Optional[datetime]:
+"””
 Parse a date string (and optional time) into a timezone-aware UK datetime.
 Handles formats like:
 ‘17 Apr 2026’, ‘Fri, Apr 17’, ‘17th April 2026’, ‘2026-04-17’
 Times like: ‘19:45’, ‘7:45pm’, ‘15:00’
-“””
+"””
 date_str = date_str.strip()
-time_str = time_str.strip() if time_str else “”
+time_str = time_str.strip() if time_str else "”
 
 
 # Remove ordinal suffixes
@@ -160,8 +160,8 @@ except Exception as e:
 
 
 def make_uid(prefix: str, title: str, start: datetime) -> str:
-“”“Generate a stable unique UID for an ICS event.”””
-slug = re.sub(r”[^a-z0-9]”, “-”, title.lower())[:40]
+"”"Generate a stable unique UID for an ICS event.”””
+slug = re.sub(r”[^a-z0-9]”, "-”, title.lower())[:40]
 stamp = start.strftime(”%Y%m%dT%H%M%S”)
 return f”{prefix}-{slug}-{stamp}@bristol-bears-calendar”
 
@@ -171,15 +171,15 @@ return f”{prefix}-{slug}-{stamp}@bristol-bears-calendar”
 
 # —————————————————————————
 
-PREM_URL = CONFIG[“sources”][“bristol_bears”][“primary”][“url”]
-PREM_FALLBACK_URL = CONFIG[“sources”][“bristol_bears”][“fallback”][“url”]
+PREM_URL = CONFIG["sources”]["bristol_bears”]["primary”]["url”]
+PREM_FALLBACK_URL = CONFIG["sources”]["bristol_bears”]["fallback”]["url”]
 
 def scrape_prem_rugby_fixtures() -> list[CalendarEvent]:
-“””
+"””
 Scrape Bristol Bears fixtures from the Premiership Rugby website.
 The site renders fixture cards with date/time/teams/venue info.
 Falls back to Ultimate Rugby if Premiership Rugby fails.
-“””
+"””
 events = []
 
 
@@ -199,7 +199,7 @@ return events
 
 
 def _parse_prem_rugby_page(soup: BeautifulSoup) -> list[CalendarEvent]:
-“”“Parse fixtures from premiershiprugby.com club fixtures page.”””
+"”"Parse fixtures from premiershiprugby.com club fixtures page.”””
 events = []
 seen = set()
 
@@ -230,8 +230,8 @@ return events
 
 
 def _extract_prem_match_card(card) -> Optional[CalendarEvent]:
-“”“Extract a fixture from a Premiership Rugby match card element.”””
-text = card.get_text(separator=” “, strip=True)
+"”"Extract a fixture from a Premiership Rugby match card element.”””
+text = card.get_text(separator=” ", strip=True)
 
 
 # Must contain 'Bristol Bears' or 'Bristol'
@@ -315,10 +315,10 @@ return CalendarEvent(
 
 
 def _extract_prem_text_based(soup: BeautifulSoup) -> list[CalendarEvent]:
-“””
+"””
 Text-based fallback: find all text nodes containing Bristol Bears match info.
 Scans the full page text for fixture patterns.
-“””
+"””
 events = []
 seen = set()
 page_text = soup.get_text(separator=”\n”)
@@ -346,7 +346,7 @@ return events
 
 
 def _parse_fixture_from_text_window(text: str) -> Optional[CalendarEvent]:
-“”“Parse a fixture from a multi-line text window.”””
+"”"Parse a fixture from a multi-line text window.”””
 # Extract date
 date_match = re.search(
 r”(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*(?:\s+\d{4})?)”,
@@ -423,7 +423,7 @@ return CalendarEvent(
 
 
 def _parse_ultimate_rugby_page(soup: BeautifulSoup) -> list[CalendarEvent]:
-“”“Parse fixtures from ultimaterugby.com.”””
+"”"Parse fixtures from ultimaterugby.com.”””
 events = []
 seen = set()
 
@@ -542,34 +542,34 @@ return events
 KNOWN_FIXTURES = [
 # Compiled from research of official sources (April 2026 onwards)
 # Format: (date_str, time_str, home, away, competition)
-(“17 Apr 2026”, “19:45”, “Bristol Bears”, “Gloucester Rugby”, “Gallagher Premiership”),
-(“25 Apr 2026”, “15:00”, “Newcastle Red Bulls”, “Bristol Bears”, “Gallagher Premiership”),
-(“09 May 2026”, “15:00”, “Bristol Bears”, “Saracens”, “Gallagher Premiership”),
-(“16 May 2026”, “15:00”, “Northampton Saints”, “Bristol Bears”, “Gallagher Premiership”),
-(“30 May 2026”, “15:00”, “Bristol Bears”, “Bath Rugby”, “Gallagher Premiership”),
-(“06 Jun 2026”, “14:00”, “Sale Sharks”, “Bristol Bears”, “Gallagher Premiership”),
+("17 Apr 2026”, "19:45”, "Bristol Bears”, "Gloucester Rugby”, "Gallagher Premiership”),
+("25 Apr 2026”, "15:00”, "Newcastle Red Bulls”, "Bristol Bears”, "Gallagher Premiership”),
+("09 May 2026”, "15:00”, "Bristol Bears”, "Saracens”, "Gallagher Premiership”),
+("16 May 2026”, "15:00”, "Northampton Saints”, "Bristol Bears”, "Gallagher Premiership”),
+("30 May 2026”, "15:00”, "Bristol Bears”, "Bath Rugby”, "Gallagher Premiership”),
+("06 Jun 2026”, "14:00”, "Sale Sharks”, "Bristol Bears”, "Gallagher Premiership”),
 ]
 
 KNOWN_VENUES = {
-“Newcastle Red Bulls”: “Kingston Park, Brunton Road, Kenton Bank Foot, Newcastle, NE13 8AF”,
-“Northampton Saints”: “cinch Stadium at Franklin’s Gardens, Weedon Road, Northampton, NN5 5BG”,
-“Bath Rugby”: “The Rec, Pulteney Mews, Bath, BA2 4DS”,
-“Sale Sharks”: “Salford Community Stadium, 1 Stadium Way, Eccles, Salford, M30 7EY”,
-“Exeter Chiefs”: “Sandy Park, Exeter, EX2 7NN”,
-“Gloucester Rugby”: “Kingsholm Stadium, Kingsholm Road, Gloucester, GL1 3AX”,
-“Harlequins”: “The Stoop, Langhorn Drive, Twickenham, TW2 7SX”,
-“Leicester Tigers”: “Welford Road Stadium, Aylestone Road, Leicester, LE2 7TR”,
-“Saracens”: “StoneX Stadium, Greenlands Lane, London, NW4 1RL”,
+"Newcastle Red Bulls”: "Kingston Park, Brunton Road, Kenton Bank Foot, Newcastle, NE13 8AF”,
+"Northampton Saints”: "cinch Stadium at Franklin’s Gardens, Weedon Road, Northampton, NN5 5BG”,
+"Bath Rugby”: "The Rec, Pulteney Mews, Bath, BA2 4DS”,
+"Sale Sharks”: "Salford Community Stadium, 1 Stadium Way, Eccles, Salford, M30 7EY”,
+"Exeter Chiefs”: "Sandy Park, Exeter, EX2 7NN”,
+"Gloucester Rugby”: "Kingsholm Stadium, Kingsholm Road, Gloucester, GL1 3AX”,
+"Harlequins”: "The Stoop, Langhorn Drive, Twickenham, TW2 7SX”,
+"Leicester Tigers”: "Welford Road Stadium, Aylestone Road, Leicester, LE2 7TR”,
+"Saracens”: "StoneX Stadium, Greenlands Lane, London, NW4 1RL”,
 }
 
 def get_known_fixtures() -> list[CalendarEvent]:
-“”“Return hardcoded known fixtures as a reliable baseline.”””
+"”"Return hardcoded known fixtures as a reliable baseline.”””
 events = []
 for date_str, time_str, home, away, competition in KNOWN_FIXTURES:
 start = parse_uk_datetime(date_str, time_str)
 if not start:
 continue
-end = start + timedelta(minutes=CONFIG[“default_match_duration_minutes”])
+end = start + timedelta(minutes=CONFIG["default_match_duration_minutes”])
 
 
     is_home = home == "Bristol Bears"
@@ -607,15 +607,15 @@ return events
 
 # —————————————————————————
 
-ASHTON_GATE_URL = CONFIG[“sources”][“ashton_gate”][“primary”][“url”]
+ASHTON_GATE_URL = CONFIG["sources”]["ashton_gate”]["primary”]["url”]
 
 def scrape_ashton_gate_events() -> list[CalendarEvent]:
-“””
+"””
 Scrape events from Ashton Gate Stadium What’s On page.
 The page is a WordPress site with event articles structured as:
 <article class="tribe-events-calendar-list__event-article">
 or similar event markup.
-“””
+"””
 events = []
 seen = set()
 
@@ -665,11 +665,11 @@ return final
 
 
 def *parse_ashton_gate_article(article) -> Optional[CalendarEvent]:
-“”“Parse a single event article from the Ashton Gate What’s On page.”””
+"”"Parse a single event article from the Ashton Gate What’s On page.”””
 # Title
 title_el = (
-article.find([“h1”, “h2”, “h3”, “h4”], class*=re.compile(r”title|name|heading”, re.I)) or
-article.find([“h1”, “h2”, “h3”, “h4”])
+article.find(["h1”, "h2”, "h3”, "h4”], class*=re.compile(r”title|name|heading”, re.I)) or
+article.find(["h1”, "h2”, "h3”, "h4”])
 )
 if not title_el:
 return None
@@ -736,7 +736,7 @@ return CalendarEvent(
 
 
 def _parse_ashton_gate_text(soup: BeautifulSoup) -> list[CalendarEvent]:
-“”“Text-based fallback parser for Ashton Gate What’s On page.”””
+"”"Text-based fallback parser for Ashton Gate What’s On page.”””
 events = []
 seen = set()
 
@@ -826,36 +826,36 @@ return events
 
 KNOWN_ASHTON_GATE_EVENTS = [
 # From research of ashtongatestadium.co.uk/whatson/ on 2026-04-19
-(“25 Apr 2026”, “14:15”, “Red Roses vs Wales | Women’s Six Nations”, “Sport”),
-(“27 Apr 2026”, “09:00”, “National Apprenticeship & Education Event – Skills Show Southwest”, “Event”),
-(“03 May 2026”, “10:00”, “Card Market Bristol”, “Event”),
-(“14 May 2026”, “10:00”, “Play on the Pitch”, “Event”),
-(“21 May 2026”, “09:00”, “Digital NRG: How to Grow & Scale a Brand in 2026”, “Event”),
-(“21 May 2026”, “18:30”, “Gala Dinner 2026”, “Event”),
-(“14 Jun 2026”, “09:00”, “Bristol Guitar Show”, “Event”),
-(“04 Jul 2026”, “11:00”, “Bristol Tattoo Convention 2026”, “Event”),
-(“26 Jul 2026”, “08:00”, “Break The Cycle 2026”, “Event”),
-(“20 Oct 2026”, “10:00”, “itSHOWCASE Bristol”, “Event”),
+("25 Apr 2026”, "14:15”, "Red Roses vs Wales | Women’s Six Nations”, "Sport”),
+("27 Apr 2026”, "09:00”, "National Apprenticeship & Education Event – Skills Show Southwest”, "Event”),
+("03 May 2026”, "10:00”, "Card Market Bristol”, "Event”),
+("14 May 2026”, "10:00”, "Play on the Pitch”, "Event”),
+("21 May 2026”, "09:00”, "Digital NRG: How to Grow & Scale a Brand in 2026”, "Event”),
+("21 May 2026”, "18:30”, "Gala Dinner 2026”, "Event”),
+("14 Jun 2026”, "09:00”, "Bristol Guitar Show”, "Event”),
+("04 Jul 2026”, "11:00”, "Bristol Tattoo Convention 2026”, "Event”),
+("26 Jul 2026”, "08:00”, "Break The Cycle 2026”, "Event”),
+("20 Oct 2026”, "10:00”, "itSHOWCASE Bristol”, "Event”),
 ]
 
 def get_known_ashton_gate_events() -> list[CalendarEvent]:
-“”“Return hardcoded known Ashton Gate events as reliable baseline.”””
+"”"Return hardcoded known Ashton Gate events as reliable baseline.”””
 events = []
 for date_str, time_str, title, category in KNOWN_ASHTON_GATE_EVENTS:
 start = parse_uk_datetime(date_str, time_str)
 if not start:
 continue
-end = start + timedelta(minutes=CONFIG[“default_event_duration_minutes”])
-uid = make_uid(“ag-known”, title, start)
+end = start + timedelta(minutes=CONFIG["default_event_duration_minutes”])
+uid = make_uid("ag-known”, title, start)
 description = _build_event_description(title=title, date_str=date_str)
 events.append(CalendarEvent(
 uid=uid,
 title=f”[Ashton Gate] {title}”,
 start=start,
 end=end,
-location=“Ashton Gate Stadium, Ashton Road, Bristol, BS3 2EJ”,
+location="Ashton Gate Stadium, Ashton Road, Bristol, BS3 2EJ”,
 description=description,
-categories=[“Ashton Gate”, “Stadium Event”, category],
+categories=["Ashton Gate”, "Stadium Event”, category],
 url=ASHTON_GATE_URL,
 ))
 return events
@@ -867,24 +867,24 @@ return events
 # —————————————————————————
 
 def _guess_venue(team: str) -> str:
-“”“Return a known venue for a Premiership Rugby team.”””
+"”"Return a known venue for a Premiership Rugby team.”””
 return KNOWN_VENUES.get(team, f”{team} home ground”)
 
 def _extract_competition(text: str) -> str:
-“”“Guess the competition from surrounding text.”””
+"”"Guess the competition from surrounding text.”””
 text_lower = text.lower()
-if “champions cup” in text_lower or “investec” in text_lower or “epcr” in text_lower:
-return “Investec Champions Cup”
-if “premiership cup” in text_lower or “prem cup” in text_lower:
-return “Premiership Rugby Cup”
-if “gallagher” in text_lower or “premiership” in text_lower or “prem rugby” in text_lower:
-return “Gallagher Premiership”
-return “Rugby”
+if "champions cup” in text_lower or "investec” in text_lower or "epcr” in text_lower:
+return "Investec Champions Cup”
+if "premiership cup” in text_lower or "prem cup” in text_lower:
+return "Premiership Rugby Cup”
+if "gallagher” in text_lower or "premiership” in text_lower or "prem rugby” in text_lower:
+return "Gallagher Premiership”
+return "Rugby”
 
 def _build_rugby_description(home_team: str, away_team: str, competition: str,
 kickoff: str, is_home: bool) -> str:
-“”“Build a rich description string for a rugby fixture.”””
-home_flag = “ 🏠” if is_home else “”
+"”"Build a rich description string for a rugby fixture.”””
+home_flag = " 🏠” if is_home else "”
 return (
 f”🏉 {competition}\n\n”
 f”{home_team} vs {away_team}\n”
@@ -894,8 +894,8 @@ f”Tickets: https://www.bristolbearsrugby.com/tickets/\n”
 f”Fixtures: https://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results/”
 )
 
-def _build_event_description(title: str, date_str: str, raw_desc: str = “”) -> str:
-“”“Build a description for an Ashton Gate event.”””
+def _build_event_description(title: str, date_str: str, raw_desc: str = "”) -> str:
+"”"Build a description for an Ashton Gate event.”””
 desc = f”🏟️ Ashton Gate Stadium Event\n\n{title}\nDate: {date_str}\n”
 if raw_desc:
 desc += f”\n{raw_desc}\n”
@@ -909,10 +909,10 @@ return desc
 # —————————————————————————
 
 def merge_and_deduplicate(event_lists: list[list[CalendarEvent]]) -> list[CalendarEvent]:
-“””
+"””
 Merge multiple event lists, deduplicating by approximate date+title match.
 Prefer events with more complete data (location, description).
-“””
+"””
 all_events = []
 for lst in event_lists:
 all_events.extend(lst)
@@ -953,9 +953,9 @@ return final
 # —————————————————————————
 
 def run() -> list[CalendarEvent]:
-“”“Run all scrapers and return merged, deduplicated event list.”””
+"”"Run all scrapers and return merged, deduplicated event list.”””
 logger.info(”=” * 60)
-logger.info(“Bristol Bears, Bristol City & Ashton Gate Calendar Scraper”)
+logger.info("Bristol Bears, Bristol City & Ashton Gate Calendar Scraper”)
 logger.info(”=” * 60)
 
 
@@ -993,6 +993,6 @@ for ev in all_events:
 return all_events
 
 
-if *name* == “*main*”:
+if *name* == "*main*”:
 events = run()
 print(f”\n✅ Scraper complete. {len(events)} events found.”)
