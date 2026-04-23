@@ -1,4 +1,4 @@
-[11:16, 23/04/2026] Jason: #!/usr/bin/env python3
+#!/usr/bin/env python3
 
 # Bristol City FC Home Fixtures Scraper
 
