@@ -1,5 +1,5 @@
 # #!/usr/bin/env python3
-“””
+"""
 Bristol Bears & Ashton Gate Calendar Scraper
 
 Scrapes fixtures from Premiership Rugby website and events from
@@ -13,7 +13,7 @@ Data Source Decision:
   Fallback: Ultimate Rugby (ultimaterugby.com) for additional competitions.
 - Ashton Gate events: ashtongatestadium.co.uk/whatson/
   Chosen because: official source, WordPress CMS with stable event markup.
-  “””
+"""
 
 import json
 import logging
