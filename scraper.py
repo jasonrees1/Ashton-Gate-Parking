@@ -1,19 +1,59 @@
-# #!/usr/bin/env python3
-“””
-Bristol Bears & Ashton Gate Calendar Scraper
+[11:16, 23/04/2026] Jason: #!/usr/bin/env python3
 
-Scrapes fixtures from Premiership Rugby website and events from
-Ashton Gate Stadium’s What’s On page, then generates a combined .ics file.
+# Bristol City FC Home Fixtures Scraper
 
-Data Source Decision:
+# ======================================
 
-- Bristol Bears fixtures: Premiership Rugby official website (premiershiprugby.com)
-  Chosen because: public HTML, stable structure, covers all Premiership matches,
-  no login required, no API key needed.
-  Fallback: Ultimate Rugby (ultimaterugby.com) for additional competitions.
-- Ashton Gate events: ashtongatestadium.co.uk/whatson/
-  Chosen because: official source, WordPress CMS with stable event markup.
-  “””
+# Fetches Bristol City home matches at Ashton Gate and returns CalendarEvent objects.
+
+# 
+
+# DATA SOURCE DECISION:
+
+# PRIMARY:  BBC Sport - bbc.co.uk/sport/football/teams/bristol-city/fixtures
+
+# Chosen because: public HTML, no login, no API key, stable for 10+ years,
+
+# covers Championship, FA Cup, Carabao Cup and play-offs, real-time kick-off
+
+# time updates.
+
+# FALLBACK: Soccerway - uk.soccerway.com/teams/england/bristol-city-fc/660/matches/
+
+# Independent aggregator, different code path = true redundancy.
+
+# BASELINE: Hardcoded known home fixtures (researched April 2026).
+
+# Guarantees calendar is never empty even if both scrapers fail.
+
+# 
+
+# Only …
+[11:22, 23/04/2026] Jason: #!/usr/bin/env python3
+
+# Bristol Bears & Ashton Gate Calendar Scraper
+
+# ============================================
+
+# Scrapes fixtures from Premiership Rugby website and events from
+
+# Ashton Gate Stadium’s What’s On page, then generates a combined .ics file.
+
+# 
+
+# Data Source Decision:
+
+# - Bristol Bears fixtures: Premiership Rugby official website (premiershiprugby.com)
+
+# Chosen because: public HTML, stable structure, covers all Premiership matches,
+
+# no login required, no API key needed.
+
+# Fallback: Ultimate Rugby (ultimaterugby.com) for additional competitions.
+
+# - Ashton Gate events: ashtongatestadium.co.uk/whatson/
+
+# Chosen because: official source, WordPress CMS with stable event markup.
 
 import json
 import logging
@@ -106,21 +146,24 @@ SESSION.headers.update({
 })
 
 def fetch_page(url: str, retries: int = None) -> Optional[BeautifulSoup]:
-“”“Fetch a URL and return a BeautifulSoup object, with retries.”””
+# Fetch a URL and return a BeautifulSoup object, with retries.
+
+
 if retries is None:
-retries = HTTP_CFG[“retry_attempts”]
+    retries = HTTP_CFG["retry_attempts"]
 for attempt in range(1, retries + 1):
-try:
-logger.info(f”Fetching [{attempt}/{retries}]: {url}”)
-resp = SESSION.get(url, timeout=HTTP_CFG[“timeout_seconds”])
-resp.raise_for_status()
-return BeautifulSoup(resp.text, “lxml”)
-except requests.RequestException as e:
-logger.warning(f”Request failed (attempt {attempt}): {e}”)
-if attempt < retries:
-time.sleep(HTTP_CFG[“retry_delay_seconds”])
-logger.error(f”All {retries} attempts failed for {url}”)
+    try:
+        logger.info(f"Fetching [{attempt}/{retries}]: {url}")
+        resp = SESSION.get(url, timeout=HTTP_CFG["timeout_seconds"])
+        resp.raise_for_status()
+        return BeautifulSoup(resp.text, "lxml")
+    except requests.RequestException as e:
+        logger.warning(f"Request failed (attempt {attempt}): {e}")
+        if attempt < retries:
+            time.sleep(HTTP_CFG["retry_delay_seconds"])
+logger.error(f"All {retries} attempts failed for {url}")
 return None
+
 
 # —————————————————————————
 
@@ -129,15 +172,17 @@ return None
 # —————————————————————————
 
 def parse_uk_datetime(date_str: str, time_str: str = “”) -> Optional[datetime]:
-“””
-Parse a date string (and optional time) into a timezone-aware UK datetime.
-Handles formats like:
-‘17 Apr 2026’, ‘Fri, Apr 17’, ‘17th April 2026’, ‘2026-04-17’
-Times like: ‘19:45’, ‘7:45pm’, ‘15:00’
-“””
-date_str = date_str.strip()
-time_str = time_str.strip() if time_str else “”
+# Parse a date string (and optional time) into a timezone-aware UK datetime.
 
+# Handles formats like:
+
+# ‘17 Apr 2026’, ‘Fri, Apr 17’, ‘17th April 2026’, ‘2026-04-17’
+
+# Times like: ‘19:45’, ‘7:45pm’, ‘15:00’
+
+
+date_str = date_str.strip()
+time_str = time_str.strip() if time_str else ""
 
 # Remove ordinal suffixes
 date_str = re.sub(r"(\d+)(st|nd|rd|th)", r"\1", date_str)
@@ -160,10 +205,13 @@ except Exception as e:
 
 
 def make_uid(prefix: str, title: str, start: datetime) -> str:
-“”“Generate a stable unique UID for an ICS event.”””
-slug = re.sub(r”[^a-z0-9]”, “-”, title.lower())[:40]
-stamp = start.strftime(”%Y%m%dT%H%M%S”)
-return f”{prefix}-{slug}-{stamp}@bristol-bears-calendar”
+# Generate a stable unique UID for an ICS event.
+
+
+slug = re.sub(r"[^a-z0-9]", "-", title.lower())[:40]
+stamp = start.strftime("%Y%m%dT%H%M%S")
+return f"{prefix}-{slug}-{stamp}@bristol-bears-calendar"
+
 
 # —————————————————————————
 
@@ -175,13 +223,14 @@ PREM_URL = CONFIG[“sources”][“bristol_bears”][“primary”][“url”]
 PREM_FALLBACK_URL = CONFIG[“sources”][“bristol_bears”][“fallback”][“url”]
 
 def scrape_prem_rugby_fixtures() -> list[CalendarEvent]:
-“””
-Scrape Bristol Bears fixtures from the Premiership Rugby website.
-The site renders fixture cards with date/time/teams/venue info.
-Falls back to Ultimate Rugby if Premiership Rugby fails.
-“””
-events = []
+# Scrape Bristol Bears fixtures from the Premiership Rugby website.
 
+# The site renders fixture cards with date/time/teams/venue info.
+
+# Falls back to Ultimate Rugby if Premiership Rugby fails.
+
+
+events = []
 
 soup = fetch_page(PREM_URL)
 if soup:
@@ -199,10 +248,11 @@ return events
 
 
 def _parse_prem_rugby_page(soup: BeautifulSoup) -> list[CalendarEvent]:
-“”“Parse fixtures from premiershiprugby.com club fixtures page.”””
+# Parse fixtures from premiershiprugby.com club fixtures page.
+
+
 events = []
 seen = set()
-
 
 # The Premiership Rugby site uses match cards with various class structures.
 # We look for elements containing match data by scanning for date+team patterns.
@@ -230,9 +280,10 @@ return events
 
 
 def _extract_prem_match_card(card) -> Optional[CalendarEvent]:
-“”“Extract a fixture from a Premiership Rugby match card element.”””
-text = card.get_text(separator=” “, strip=True)
+# Extract a fixture from a Premiership Rugby match card element.
 
+
+text = card.get_text(separator=" ", strip=True)
 
 # Must contain 'Bristol Bears' or 'Bristol'
 if not re.search(r"bristol", text, re.I):
@@ -315,14 +366,14 @@ return CalendarEvent(
 
 
 def _extract_prem_text_based(soup: BeautifulSoup) -> list[CalendarEvent]:
-“””
-Text-based fallback: find all text nodes containing Bristol Bears match info.
-Scans the full page text for fixture patterns.
-“””
+# Text-based fallback: find all text nodes containing Bristol Bears match info.
+
+# Scans the full page text for fixture patterns.
+
+
 events = []
 seen = set()
-page_text = soup.get_text(separator=”\n”)
-
+page_text = soup.get_text(separator="\n")
 
 # Pattern: date line followed by team line
 # e.g. "Fri, Apr 17\n19:45\nBristol Bears v Gloucester"
@@ -346,18 +397,19 @@ return events
 
 
 def _parse_fixture_from_text_window(text: str) -> Optional[CalendarEvent]:
-“”“Parse a fixture from a multi-line text window.”””
+# Parse a fixture from a multi-line text window.
+
+
 # Extract date
 date_match = re.search(
-r”(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*(?:\s+\d{4})?)”,
-text, re.I
+    r"(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*(?:\s+\d{4})?)",
+    text, re.I
 ) or re.search(
-r”((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z],?\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]\s+\d{1,2}(?:\s+\d{4})?)”,
-text, re.I
+    r"((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*,?\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:\s+\d{4})?)",
+    text, re.I
 )
 if not date_match:
-return None
-
+    return None
 
 date_str = date_match.group(1)
 time_match = re.search(r"(\d{1,2}:\d{2}(?:\s*[ap]m)?)", text, re.I)
@@ -423,10 +475,11 @@ return CalendarEvent(
 
 
 def _parse_ultimate_rugby_page(soup: BeautifulSoup) -> list[CalendarEvent]:
-“”“Parse fixtures from ultimaterugby.com.”””
+# Parse fixtures from ultimaterugby.com.
+
+
 events = []
 seen = set()
-
 
 # Ultimate Rugby lists matches with team names and dates
 match_links = soup.find_all("a", href=re.compile(r"/match/bristol", re.I))
@@ -563,14 +616,15 @@ KNOWN_VENUES = {
 }
 
 def get_known_fixtures() -> list[CalendarEvent]:
-“”“Return hardcoded known fixtures as a reliable baseline.”””
+# Return hardcoded known fixtures as a reliable baseline.
+
+
 events = []
 for date_str, time_str, home, away, competition in KNOWN_FIXTURES:
-start = parse_uk_datetime(date_str, time_str)
-if not start:
-continue
-end = start + timedelta(minutes=CONFIG[“default_match_duration_minutes”])
-
+    start = parse_uk_datetime(date_str, time_str)
+    if not start:
+        continue
+    end = start + timedelta(minutes=CONFIG["default_match_duration_minutes"])
 
     is_home = home == "Bristol Bears"
     if is_home:
@@ -610,15 +664,17 @@ return events
 ASHTON_GATE_URL = CONFIG[“sources”][“ashton_gate”][“primary”][“url”]
 
 def scrape_ashton_gate_events() -> list[CalendarEvent]:
-“””
-Scrape events from Ashton Gate Stadium What’s On page.
-The page is a WordPress site with event articles structured as:
-<article class="tribe-events-calendar-list__event-article">
-or similar event markup.
-“””
+# Scrape events from Ashton Gate Stadium What’s On page.
+
+# The page is a WordPress site with event articles structured as:
+
+# <article class="tribe-events-calendar-list__event-article">
+
+# or similar event markup.
+
+
 events = []
 seen = set()
-
 
 soup = fetch_page(ASHTON_GATE_URL)
 if not soup:
@@ -664,19 +720,20 @@ for e in events:
 return final
 
 
-def *parse_ashton_gate_article(article) -> Optional[CalendarEvent]:
-“”“Parse a single event article from the Ashton Gate What’s On page.”””
+def _parse_ashton_gate_article(article) -> Optional[CalendarEvent]:
+# Parse a single event article from the Ashton Gate What’s On page.
+
+
 # Title
 title_el = (
-article.find([“h1”, “h2”, “h3”, “h4”], class*=re.compile(r”title|name|heading”, re.I)) or
-article.find([“h1”, “h2”, “h3”, “h4”])
+    article.find(["h1", "h2", "h3", "h4"], class_=re.compile(r"title|name|heading", re.I)) or
+    article.find(["h1", "h2", "h3", "h4"])
 )
 if not title_el:
-return None
+    return None
 title = title_el.get_text(strip=True)
 if not title:
-return None
-
+    return None
 
 text = article.get_text(separator=" ", strip=True)
 
@@ -736,10 +793,11 @@ return CalendarEvent(
 
 
 def _parse_ashton_gate_text(soup: BeautifulSoup) -> list[CalendarEvent]:
-“”“Text-based fallback parser for Ashton Gate What’s On page.”””
+# Text-based fallback parser for Ashton Gate What’s On page.
+
+
 events = []
 seen = set()
-
 
 # The page has month headers like "## APRIL 2026" and event blocks below
 text = soup.get_text(separator="\n")
@@ -839,26 +897,29 @@ KNOWN_ASHTON_GATE_EVENTS = [
 ]
 
 def get_known_ashton_gate_events() -> list[CalendarEvent]:
-“”“Return hardcoded known Ashton Gate events as reliable baseline.”””
+# Return hardcoded known Ashton Gate events as reliable baseline.
+
+
 events = []
 for date_str, time_str, title, category in KNOWN_ASHTON_GATE_EVENTS:
-start = parse_uk_datetime(date_str, time_str)
-if not start:
-continue
-end = start + timedelta(minutes=CONFIG[“default_event_duration_minutes”])
-uid = make_uid(“ag-known”, title, start)
-description = _build_event_description(title=title, date_str=date_str)
-events.append(CalendarEvent(
-uid=uid,
-title=f”[Ashton Gate] {title}”,
-start=start,
-end=end,
-location=“Ashton Gate Stadium, Ashton Road, Bristol, BS3 2EJ”,
-description=description,
-categories=[“Ashton Gate”, “Stadium Event”, category],
-url=ASHTON_GATE_URL,
-))
+    start = parse_uk_datetime(date_str, time_str)
+    if not start:
+        continue
+    end = start + timedelta(minutes=CONFIG["default_event_duration_minutes"])
+    uid = make_uid("ag-known", title, start)
+    description = _build_event_description(title=title, date_str=date_str)
+    events.append(CalendarEvent(
+        uid=uid,
+        title=f"[Ashton Gate] {title}",
+        start=start,
+        end=end,
+        location="Ashton Gate Stadium, Ashton Road, Bristol, BS3 2EJ",
+        description=description,
+        categories=["Ashton Gate", "Stadium Event", category],
+        url=ASHTON_GATE_URL,
+    ))
 return events
+
 
 # —————————————————————————
 
@@ -867,40 +928,52 @@ return events
 # —————————————————————————
 
 def _guess_venue(team: str) -> str:
-“”“Return a known venue for a Premiership Rugby team.”””
-return KNOWN_VENUES.get(team, f”{team} home ground”)
+# Return a known venue for a Premiership Rugby team.
+
+
+return KNOWN_VENUES.get(team, f"{team} home ground")
+
 
 def _extract_competition(text: str) -> str:
-“”“Guess the competition from surrounding text.”””
+# Guess the competition from surrounding text.
+
+
 text_lower = text.lower()
-if “champions cup” in text_lower or “investec” in text_lower or “epcr” in text_lower:
-return “Investec Champions Cup”
-if “premiership cup” in text_lower or “prem cup” in text_lower:
-return “Premiership Rugby Cup”
-if “gallagher” in text_lower or “premiership” in text_lower or “prem rugby” in text_lower:
-return “Gallagher Premiership”
-return “Rugby”
+if "champions cup" in text_lower or "investec" in text_lower or "epcr" in text_lower:
+    return "Investec Champions Cup"
+if "premiership cup" in text_lower or "prem cup" in text_lower:
+    return "Premiership Rugby Cup"
+if "gallagher" in text_lower or "premiership" in text_lower or "prem rugby" in text_lower:
+    return "Gallagher Premiership"
+return "Rugby"
+
 
 def _build_rugby_description(home_team: str, away_team: str, competition: str,
 kickoff: str, is_home: bool) -> str:
-“”“Build a rich description string for a rugby fixture.”””
-home_flag = “ 🏠” if is_home else “”
+# Build a rich description string for a rugby fixture.
+
+
+home_flag = " 🏠" if is_home else ""
 return (
-f”🏉 {competition}\n\n”
-f”{home_team} vs {away_team}\n”
-f”Kick-off: {kickoff}{home_flag}\n\n”
-f”Bristol Bears — Gallagher Premiership\n”
-f”Tickets: https://www.bristolbearsrugby.com/tickets/\n”
-f”Fixtures: https://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results/”
+    f"🏉 {competition}\n\n"
+    f"{home_team} vs {away_team}\n"
+    f"Kick-off: {kickoff}{home_flag}\n\n"
+    f"Bristol Bears — Gallagher Premiership\n"
+    f"Tickets: https://www.bristolbearsrugby.com/tickets/\n"
+    f"Fixtures: https://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results/"
 )
 
+
 def _build_event_description(title: str, date_str: str, raw_desc: str = “”) -> str:
-“”“Build a description for an Ashton Gate event.”””
-desc = f”🏟️ Ashton Gate Stadium Event\n\n{title}\nDate: {date_str}\n”
+# Build a description for an Ashton Gate event.
+
+
+desc = f"🏟️ Ashton Gate Stadium Event\n\n{title}\nDate: {date_str}\n"
 if raw_desc:
-desc += f”\n{raw_desc}\n”
-desc += f”\nMore info: {ASHTON_GATE_URL}”
+    desc += f"\n{raw_desc}\n"
+desc += f"\nMore info: {ASHTON_GATE_URL}"
 return desc
+
 
 # —————————————————————————
 
@@ -909,14 +982,14 @@ return desc
 # —————————————————————————
 
 def merge_and_deduplicate(event_lists: list[list[CalendarEvent]]) -> list[CalendarEvent]:
-“””
-Merge multiple event lists, deduplicating by approximate date+title match.
-Prefer events with more complete data (location, description).
-“””
+# Merge multiple event lists, deduplicating by approximate date+title match.
+
+# Prefer events with more complete data (location, description).
+
+
 all_events = []
 for lst in event_lists:
-all_events.extend(lst)
-
+    all_events.extend(lst)
 
 # Sort by start time
 all_events.sort(key=lambda e: e.start)
@@ -953,11 +1026,12 @@ return final
 # —————————————————————————
 
 def run() -> list[CalendarEvent]:
-“”“Run all scrapers and return merged, deduplicated event list.”””
-logger.info(”=” * 60)
-logger.info(“Bristol Bears, Bristol City & Ashton Gate Calendar Scraper”)
-logger.info(”=” * 60)
+# Run all scrapers and return merged, deduplicated event list.
 
+
+logger.info("=" * 60)
+logger.info("Bristol Bears, Bristol City & Ashton Gate Calendar Scraper")
+logger.info("=" * 60)
 
 # --- Bristol Bears fixtures ---
 logger.info("Scraping Bristol Bears fixtures...")
