@@ -1,22 +1,36 @@
-# #!/usr/bin/env python3
-“””
-Bristol City FC Home Fixtures Scraper
+#!/usr/bin/env python3
 
-Fetches Bristol City home matches at Ashton Gate and returns CalendarEvent objects.
+# Bristol City FC Home Fixtures Scraper
 
-DATA SOURCE DECISION:
-PRIMARY:  BBC Sport - bbc.co.uk/sport/football/teams/bristol-city/fixtures
-Chosen because: public HTML, no login, no API key, stable for 10+ years,
-covers Championship, FA Cup, Carabao Cup and play-offs, real-time kick-off
-time updates.
-FALLBACK: Soccerway - uk.soccerway.com/teams/england/bristol-city-fc/660/matches/
-Independent aggregator, different code path = true redundancy.
-BASELINE: Hardcoded known home fixtures (researched April 2026).
-Guarantees calendar is never empty even if both scrapers fail.
+# ======================================
 
-Only HOME fixtures at Ashton Gate are included.
-Already-played matches are skipped automatically.
-“””
+# Fetches Bristol City home matches at Ashton Gate and returns CalendarEvent objects.
+
+# 
+
+# DATA SOURCE DECISION:
+
+# PRIMARY:  BBC Sport - bbc.co.uk/sport/football/teams/bristol-city/fixtures
+
+# Chosen because: public HTML, no login, no API key, stable for 10+ years,
+
+# covers Championship, FA Cup, Carabao Cup and play-offs, real-time kick-off
+
+# time updates.
+
+# FALLBACK: Soccerway - uk.soccerway.com/teams/england/bristol-city-fc/660/matches/
+
+# Independent aggregator, different code path = true redundancy.
+
+# BASELINE: Hardcoded known home fixtures (researched April 2026).
+
+# Guarantees calendar is never empty even if both scrapers fail.
+
+# 
+
+# Only HOME fixtures at Ashton Gate are included.
+
+# Already-played matches are skipped automatically.
 
 import json
 import logging
@@ -118,55 +132,64 @@ return None
 # ── Datetime helpers ─────────────────────────────────────────────────────────
 
 def _parse_dt(date_str: str, time_str: str = “15:00”) -> Optional[datetime]:
-“”“Parse UK date + time into a timezone-aware datetime.”””
-date_str_clean = re.sub(r”(\d+)(st|nd|rd|th)”, r”\1”, date_str.strip())
-combined = f”{date_str_clean} {time_str}”.strip()
+# Parse UK date + time into a timezone-aware datetime.
+
+
+date_str_clean = re.sub(r"(\d+)(st|nd|rd|th)", r"\1", date_str.strip())
+combined = f"{date_str_clean} {time_str}".strip()
 # Check whether an explicit 4-digit year is present in the original string
-has_explicit_year = bool(re.search(r”\b20\d{2}\b”, date_str))
+has_explicit_year = bool(re.search(r"\b20\d{2}\b", date_str))
 try:
-dt = dateutil_parser.parse(combined, dayfirst=True, fuzzy=True)
-now = datetime.now(tz=TZ)
-# Only bump year when no explicit year given AND result is in the past
-if not has_explicit_year and dt.year < now.year:
-dt = dt.replace(year=now.year)
-if dt.tzinfo is None:
-dt = dt.replace(tzinfo=TZ)
-return dt
+    dt = dateutil_parser.parse(combined, dayfirst=True, fuzzy=True)
+    now = datetime.now(tz=TZ)
+    # Only bump year when no explicit year given AND result is in the past
+    if not has_explicit_year and dt.year < now.year:
+        dt = dt.replace(year=now.year)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=TZ)
+    return dt
 except Exception as e:
-logger.debug(f”BCFC date parse failed ‘{combined}’: {e}”)
-return None
+    logger.debug(f"BCFC date parse failed '{combined}': {e}")
+    return None
+
 
 def _is_future(dt: datetime) -> bool:
-“”“Return True if the match hasn’t kicked off yet.”””
+# Return True if the match hasn’t kicked off yet.
+
+
 return dt > datetime.now(tz=TZ)
+
 
 def _make_uid(opponent: str, start: datetime) -> str:
 slug = re.sub(r”[^a-z0-9]”, “-”, opponent.lower())[:30]
 return f”bcfc-home-{slug}-{start.strftime(’%Y%m%dT%H%M%S’)}@bristol-bears-calendar”
 
 def _make_event(opponent: str, competition: str, start: datetime):
-“”“Build a CalendarEvent for a Bristol City home match.”””
+# Build a CalendarEvent for a Bristol City home match.
+
+
 from scraper import CalendarEvent
 end = start + timedelta(minutes=115)  # 90min + warm-up + half-time
-title = f”Bristol City vs {opponent}”
+title = f"Bristol City vs {opponent}"
 description = (
-f”⚽ {competition}\n\n”
-f”Bristol City vs {opponent}\n”
-f”Kick-off: {start.strftime(’%A %d %B %Y, %H:%M’)} 🏠\n\n”
-f”Venue: Ashton Gate Stadium, Bristol\n”
-f”Tickets: {BCFC_TICKETS}\n”
-f”Fixtures: {BCFC_FIXTURES}”
+    f"⚽ {competition}\n\n"
+    f"Bristol City vs {opponent}\n"
+    f"Kick-off: {start.strftime('%A %d %B %Y, %H:%M')} 🏠\n\n"
+    f"Venue: Ashton Gate Stadium, Bristol\n"
+    f"Tickets: {BCFC_TICKETS}\n"
+    f"Fixtures: {BCFC_FIXTURES}"
 )
 return CalendarEvent(
-uid=_make_uid(opponent, start),
-title=title,
-start=start,
-end=end,
-location=BCFC_VENUE,
-description=description,
-categories=[“Football”, “Bristol City”, competition],
-url=BCFC_FIXTURES,
+    uid=_make_uid(opponent, start),
+    title=title,
+    start=start,
+    end=end,
+    location=BCFC_VENUE,
+    description=description,
+    categories=["Football", "Bristol City", competition],
+    url=BCFC_FIXTURES,
 )
+
 
 def _extract_competition(text: str) -> str:
 t = text.lower()
@@ -181,20 +204,29 @@ return “EFL Championship”
 # ── Primary scraper: BBC Sport ───────────────────────────────────────────────
 
 def _scrape_bbc() -> list:
-“””
-Parse BBC Sport’s Bristol City fixtures page.
+# Parse BBC Sport’s Bristol City fixtures page.
+
+# 
+
+# BBC Sport fixture pages render each match inside a list/article with:
+
+# - Date (in a heading or time element)
+
+# - Home team v Away team
+
+# - Competition label
+
+# - Score (only if played)
+
+# 
+
+# We look for upcoming (no score) fixtures where Bristol City is home.
+
+# BBC’s stable CSS classes include ‘sp-c-fixture’ and ‘gs-o-list-ui__item’.
+
+# We use text-pattern matching as a universal fallback when classes change.
 
 
-BBC Sport fixture pages render each match inside a list/article with:
-  - Date (in a heading or time element)
-  - Home team v Away team
-  - Competition label
-  - Score (only if played)
-
-We look for upcoming (no score) fixtures where Bristol City is home.
-BBC's stable CSS classes include 'sp-c-fixture' and 'gs-o-list-ui__item'.
-We use text-pattern matching as a universal fallback when classes change.
-"""
 from scraper import CalendarEvent
 
 soup = _fetch(BBC_URL)
@@ -228,11 +260,12 @@ return events
 
 
 def _parse_bbc_element(el, text: str):
-“”“Try to extract a home fixture from a BBC Sport fixture element.”””
-# Must mention Bristol City
-if not re.search(r”bristol city”, text, re.I):
-return None
+# Try to extract a home fixture from a BBC Sport fixture element.
 
+
+# Must mention Bristol City
+if not re.search(r"bristol city", text, re.I):
+    return None
 
 # Skip if it looks like a result (has a scoreline like '2 - 1')
 if re.search(r"\b\d\s*[-–]\s*\d\b", text):
@@ -302,14 +335,14 @@ return _make_event(opponent, competition, start)
 
 
 def _bbc_text_scan(soup: BeautifulSoup) -> list:
-“””
-Text-based scan of the full BBC Sport page.
-Finds date headers followed by fixture lines with “Bristol City v <Opponent>”.
-“””
+# Text-based scan of the full BBC Sport page.
+
+# Finds date headers followed by fixture lines with “Bristol City v <Opponent>”.
+
+
 events = []
 seen = set()
-lines = [l.strip() for l in soup.get_text(separator=”\n”).splitlines() if l.strip()]
-
+lines = [l.strip() for l in soup.get_text(separator="\n").splitlines() if l.strip()]
 
 current_date = ""
 for i, line in enumerate(lines):
@@ -353,16 +386,18 @@ return events
 # ── Fallback scraper: Soccerway ──────────────────────────────────────────────
 
 def _scrape_soccerway() -> list:
-“””
-Parse Bristol City fixtures from Soccerway.
-Soccerway uses a table with columns: date, home, score, away, competition.
-Home fixtures are where Bristol City appears in the home column.
-Future matches have no score (shown as ‘-’ or empty).
-“””
+# Parse Bristol City fixtures from Soccerway.
+
+# Soccerway uses a table with columns: date, home, score, away, competition.
+
+# Home fixtures are where Bristol City appears in the home column.
+
+# Future matches have no score (shown as ‘-’ or empty).
+
+
 soup = _fetch(SOCCERWAY_URL)
 if not soup:
-return []
-
+    return []
 
 events = []
 seen = set()
@@ -424,15 +459,16 @@ return events
 # ── Hardcoded baseline ───────────────────────────────────────────────────────
 
 def get_known_bcfc_fixtures() -> list:
-“””
-Return hardcoded Bristol City home fixtures as a guaranteed baseline.
-Uses FULL_SEASON_HOME_FIXTURES and filters to future-only automatically.
-Update each summer when the new season’s fixtures are released.
-“””
+# Return hardcoded Bristol City home fixtures as a guaranteed baseline.
+
+# Uses FULL_SEASON_HOME_FIXTURES and filters to future-only automatically.
+
+# Update each summer when the new season’s fixtures are released.
+
+
 events = []
 seen = set()
 now = datetime.now(tz=TZ)
-
 
 for date_str, time_str, opponent, competition in FULL_SEASON_HOME_FIXTURES:
     start = _parse_dt(date_str, time_str)
@@ -464,22 +500,25 @@ _NAME_MAP = {
 }
 
 def _clean_team_name(name: str) -> str:
-“”“Normalise team names from various sources.”””
+# Normalise team names from various sources.
+
+
 name = name.strip()
 # Remove trailing junk like score or TBC
-name = re.sub(r”\s*(TBC|TBA|\d+[-–]\d+)\s*$”, “”, name, flags=re.I).strip()
+name = re.sub(r"\s*(TBC|TBA|\d+[-–]\d+)\s*$", "", name, flags=re.I).strip()
 lower = name.lower()
 return _NAME_MAP.get(lower, name)
+
 
 # ── Main entry point ─────────────────────────────────────────────────────────
 
 def scrape_bristol_city_home_fixtures() -> list:
-“””
-Run all scrapers in order and return merged, deduplicated home fixtures.
-Always supplements with the hardcoded baseline for reliability.
-“””
-logger.info(”— Bristol City FC home fixtures —”)
+# Run all scrapers in order and return merged, deduplicated home fixtures.
 
+# Always supplements with the hardcoded baseline for reliability.
+
+
+logger.info("--- Bristol City FC home fixtures ---")
 
 # Layer 1: BBC Sport (primary)
 live_events = _scrape_bbc()
