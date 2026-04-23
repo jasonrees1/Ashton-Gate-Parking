@@ -20,7 +20,7 @@ from dateutil import parser as dateutil_parser
 BASE_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = BASE_DIR / "config.json"
 with open(CONFIG_PATH) as f:
-CONFIG = json.load(f)
+    CONFIG = json.load(f)
 # Logging
 log_cfg = CONFIG["logging"]
 log_dir = BASE_DIR / Path(log_cfg["file"]).parent
