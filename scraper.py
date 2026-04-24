@@ -337,7 +337,7 @@ def scrape_bcfc():
     return events
 
 
-PHANTOM_TITLES = re.compile(r'(?i)^(january|february|march|april|may|june|july|august|september|october|november|december) [0-9]{4}$')
+PHANTOM_TITLES = re.compile(r'(?i)^(\[Ashton Gate\]\s+)?(january|february|march|april|may|june|july|august|september|october|november|december)\s*[0-9]{4}$')
 
 
 def merge(event_lists):
