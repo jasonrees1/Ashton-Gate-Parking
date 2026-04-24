@@ -116,13 +116,11 @@ KNOWN_VENUES = {
     'Saracens': 'StoneX Stadium, London, NW4 1RL',
 }
 
+# HOME FIXTURES ONLY - Bristol Bears at Ashton Gate
 KNOWN_BEARS_FIXTURES = [
     ('17 Apr 2026', '19:45', 'Bristol Bears', 'Gloucester Rugby', 'Gallagher Premiership'),
-    ('25 Apr 2026', '15:00', 'Newcastle Red Bulls', 'Bristol Bears', 'Gallagher Premiership'),
     ('09 May 2026', '15:00', 'Bristol Bears', 'Saracens', 'Gallagher Premiership'),
-    ('16 May 2026', '15:00', 'Northampton Saints', 'Bristol Bears', 'Gallagher Premiership'),
     ('30 May 2026', '15:00', 'Bristol Bears', 'Bath Rugby', 'Gallagher Premiership'),
-    ('06 Jun 2026', '14:00', 'Sale Sharks', 'Bristol Bears', 'Gallagher Premiership'),
 ]
 
 KNOWN_AG_EVENTS = [
@@ -276,20 +274,15 @@ def scrape_bears():
         if date_m and not re.search(r'bristol', line, re.I):
             current_date = date_m.group(1)
             continue
-        vs_m = re.search(r'(Bristol Bears)\s+v\s+([\w\s]+?)(?:\s{2,}|$)', line, re.I) or \
-               re.search(r'([\w\s]+?)\s+v\s+(Bristol Bears)(?:\s|$)', line, re.I)
+        vs_m = re.search(r'(Bristol Bears)\s+v\s+([\w\s]+?)(?:\s{2,}|$)', line, re.I)
         if vs_m and current_date:
+            # HOME ONLY - Bristol Bears listed first means home
             start = parse_dt(current_date)
             if not start:
                 continue
             end = start + timedelta(minutes=CONFIG['default_match_duration_minutes'])
-            t1, t2 = vs_m.group(1).strip(), vs_m.group(2).strip()
-            home = t1 if re.search(r'bristol', t1, re.I) else t2
-            away = t2 if re.search(r'bristol', t1, re.I) else t1
-            is_home = re.search(r'bristol', t1, re.I) is not None
-            if not is_home:
-                home, away = t1, 'Bristol Bears'
-            ev = bears_event(home, away, 'Gallagher Premiership', start, end)
+            away = vs_m.group(2).strip()
+            ev = bears_event('Bristol Bears', away, 'Gallagher Premiership', start, end)
             if ev.uid not in seen:
                 seen.add(ev.uid)
                 events.append(ev)
