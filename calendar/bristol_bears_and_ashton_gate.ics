@@ -29,7 +29,7 @@ END:VTIMEZONE
 BEGIN:VEVENT
 UID:bears-bristol-bears-vs-gloucester-rugby-20260417T194500@bristol-bears-c
  alendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260417T194500
 DTEND;TZID=Europe/London:20260417T213500
 SUMMARY:Bristol Bears vs Gloucester Rugby
@@ -44,23 +44,9 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:ag-live-april-2026-20260425T000000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
-DTSTART;TZID=Europe/London:20260425T000000
-DTEND;TZID=Europe/London:20260425T020000
-SUMMARY:[Ashton Gate] APRIL 2026
-DESCRIPTION:Ashton Gate Stadium Event\nAPRIL 2026\nMore info: https://www.a
- shtongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
 UID:ag-red-roses-vs-wales---womens-six-nations-20260425T141500@bristol-bear
  s-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260425T141500
 DTEND;TZID=Europe/London:20260425T161500
 SUMMARY:[Ashton Gate] Red Roses vs Wales - Womens Six Nations
@@ -76,7 +62,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:ag-national-apprenticeship-and-education-ev-20260427T090000@bristol-bea
  rs-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260427T090000
 DTEND;TZID=Europe/London:20260427T110000
 SUMMARY:[Ashton Gate] National Apprenticeship and Education Event
@@ -91,7 +77,7 @@ SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:bcfc-bristol-city-vs-stoke-city-20260502T123000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260502T123000
 DTEND;TZID=Europe/London:20260502T142500
 SUMMARY:Bristol City vs Stoke City
@@ -104,22 +90,8 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:ag-live-may-2026-20260503T000000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
-DTSTART;TZID=Europe/London:20260503T000000
-DTEND;TZID=Europe/London:20260503T020000
-SUMMARY:[Ashton Gate] MAY 2026
-DESCRIPTION:Ashton Gate Stadium Event\nMAY 2026\nMore info: https://www.ash
- tongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
 UID:ag-card-market-bristol-20260503T100000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260503T100000
 DTEND;TZID=Europe/London:20260503T120000
 SUMMARY:[Ashton Gate] Card Market Bristol
@@ -133,7 +105,7 @@ SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:bears-bristol-bears-vs-saracens-20260509T150000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260509T150000
 DTEND;TZID=Europe/London:20260509T165000
 SUMMARY:Bristol Bears vs Saracens
@@ -149,7 +121,7 @@ SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:ag-play-on-the-pitch-20260514T100000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260514T100000
 DTEND;TZID=Europe/London:20260514T120000
 SUMMARY:[Ashton Gate] Play on the Pitch
@@ -163,7 +135,7 @@ SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:ag-digital-nrg-event-2026-20260521T090000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260521T090000
 DTEND;TZID=Europe/London:20260521T110000
 SUMMARY:[Ashton Gate] Digital NRG Event 2026
@@ -177,7 +149,7 @@ SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:ag-gala-dinner-2026-20260521T183000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260521T183000
 DTEND;TZID=Europe/London:20260521T203000
 SUMMARY:[Ashton Gate] Gala Dinner 2026
@@ -190,23 +162,9 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:ag-live-april-2026-20260526T000000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
-DTSTART;TZID=Europe/London:20260526T000000
-DTEND;TZID=Europe/London:20260526T020000
-SUMMARY:[Ashton Gate] APRIL 2026
-DESCRIPTION:Ashton Gate Stadium Event\nAPRIL 2026\nMore info: https://www.a
- shtongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
 UID:bears-bristol-bears-vs-bath-rugby-20260530T150000@bristol-bears-calenda
  r
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260530T150000
 DTEND;TZID=Europe/London:20260530T165000
 SUMMARY:Bristol Bears vs Bath Rugby
@@ -221,22 +179,8 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:ag-live-june-2026-20260614T000000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
-DTSTART;TZID=Europe/London:20260614T000000
-DTEND;TZID=Europe/London:20260614T020000
-SUMMARY:[Ashton Gate] JUNE 2026
-DESCRIPTION:Ashton Gate Stadium Event\nJUNE 2026\nMore info: https://www.as
- htongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
 UID:ag-bristol-guitar-show-20260614T090000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260614T090000
 DTEND;TZID=Europe/London:20260614T110000
 SUMMARY:[Ashton Gate] Bristol Guitar Show
@@ -249,23 +193,9 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:ag-live-july-2026-20260704T000000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
-DTSTART;TZID=Europe/London:20260704T000000
-DTEND;TZID=Europe/London:20260704T020000
-SUMMARY:[Ashton Gate] JULY 2026
-DESCRIPTION:Ashton Gate Stadium Event\nJULY 2026\nMore info: https://www.as
- htongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
 UID:ag-bristol-tattoo-convention-2026-20260704T110000@bristol-bears-calenda
  r
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260704T110000
 DTEND;TZID=Europe/London:20260704T130000
 SUMMARY:[Ashton Gate] Bristol Tattoo Convention 2026
@@ -279,7 +209,7 @@ SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
 UID:ag-break-the-cycle-2026-20260726T080000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20260726T080000
 DTEND;TZID=Europe/London:20260726T100000
 SUMMARY:[Ashton Gate] Break The Cycle 2026
@@ -292,36 +222,8 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:ag-live-september-2026-20260917T000000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
-DTSTART;TZID=Europe/London:20260917T000000
-DTEND;TZID=Europe/London:20260917T020000
-SUMMARY:[Ashton Gate] SEPTEMBER 2026
-DESCRIPTION:Ashton Gate Stadium Event\nSEPTEMBER 2026\nMore info: https://w
- ww.ashtongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:ag-live-october-2026-20261008T000000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
-DTSTART;TZID=Europe/London:20261008T000000
-DTEND;TZID=Europe/London:20261008T020000
-SUMMARY:[Ashton Gate] OCTOBER 2026
-DESCRIPTION:Ashton Gate Stadium Event\nOCTOBER 2026\nMore info: https://www
- .ashtongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
 UID:ag-itshowcase-bristol-20261020T100000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
+DTSTAMP:20260424T094742Z
 DTSTART;TZID=Europe/London:20261020T100000
 DTEND;TZID=Europe/London:20261020T120000
 SUMMARY:[Ashton Gate] itSHOWCASE Bristol
@@ -330,34 +232,6 @@ DESCRIPTION:Ashton Gate Stadium Event\nitSHOWCASE Bristol\nDate: 20 Oct 202
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.ashtongatestadium.co.uk/whatson/
 CATEGORIES:Ashton Gate,Stadium Event,Event
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:ag-live-november-2026-20261128T000000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
-DTSTART;TZID=Europe/London:20261128T000000
-DTEND;TZID=Europe/London:20261128T020000
-SUMMARY:[Ashton Gate] NOVEMBER 2026
-DESCRIPTION:Ashton Gate Stadium Event\nNOVEMBER 2026\nMore info: https://ww
- w.ashtongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:ag-live-december-2026-20261205T000000@bristol-bears-calendar
-DTSTAMP:20260424T093645Z
-DTSTART;TZID=Europe/London:20261205T000000
-DTEND;TZID=Europe/London:20261205T020000
-SUMMARY:[Ashton Gate] DECEMBER 2026
-DESCRIPTION:Ashton Gate Stadium Event\nDECEMBER 2026\nMore info: https://ww
- w.ashtongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event
 STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
