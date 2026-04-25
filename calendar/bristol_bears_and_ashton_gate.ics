@@ -27,27 +27,28 @@ RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:bcfc-bristol-city-vs-stoke-city-20260502T113000@bristol-bears-calendar
-DTSTAMP:20260425T154615Z
-DTSTART;TZID=Europe/London:20260502T113000
-DTEND;TZID=Europe/London:20260502T132500
+UID:bcfc-live-bristol-city-vs-stoke-city-20260502T113000@bristol-bears-cale
+ ndar
+DTSTAMP:20260425T160454Z
+DTSTART;TZID=Europe/London:20260502T123000
+DTEND;TZID=Europe/London:20260502T142500
 SUMMARY:Bristol City vs Stoke City
-DESCRIPTION:Football - EFL Championship\nBristol City vs Stoke City\nKick-o
- ff: Saturday 02 May 2026 11:30\nTickets: https://www.bcfc.co.uk/tickets/
+DESCRIPTION:Football - Championship\nBristol City vs Stoke City\nKick-off: 
+ Saturday 02 May 2026 12:30
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bcfc.co.uk/fixtures/
-CATEGORIES:Football,Bristol City,EFL Championship
+CATEGORIES:Football,Bristol City,Championship
 STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:bears-bristol-bears-vs-saracens-20260509T150000@bristol-bears-calendar
-DTSTAMP:20260425T154615Z
-DTSTART;TZID=Europe/London:20260509T150000
-DTEND;TZID=Europe/London:20260509T165000
+UID:bears-bristol-bears-vs-saracens-20260509T173000@bristol-bears-calendar
+DTSTAMP:20260425T160454Z
+DTSTART;TZID=Europe/London:20260509T173000
+DTEND;TZID=Europe/London:20260509T192000
 SUMMARY:Bristol Bears vs Saracens
 DESCRIPTION:Rugby - Gallagher Premiership\nBristol Bears vs Saracens\nKick-
- off: Saturday 09 May 2026 15:00\nTickets: https://www.bristolbearsrugby.co
+ off: Saturday 09 May 2026 17:30\nTickets: https://www.bristolbearsrugby.co
  m/tickets/
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results
@@ -57,15 +58,15 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:bears-bristol-bears-vs-bath-rugby-20260530T150000@bristol-bears-calenda
+UID:bears-bristol-bears-vs-bath-rugby-20260529T194500@bristol-bears-calenda
  r
-DTSTAMP:20260425T154615Z
-DTSTART;TZID=Europe/London:20260530T150000
-DTEND;TZID=Europe/London:20260530T165000
+DTSTAMP:20260425T160454Z
+DTSTART;TZID=Europe/London:20260529T194500
+DTEND;TZID=Europe/London:20260529T213500
 SUMMARY:Bristol Bears vs Bath Rugby
 DESCRIPTION:Rugby - Gallagher Premiership\nBristol Bears vs Bath Rugby\nKic
- k-off: Saturday 30 May 2026 15:00\nTickets: https://www.bristolbearsrugby.
- com/tickets/
+ k-off: Friday 29 May 2026 19:45\nTickets: https://www.bristolbearsrugby.co
+ m/tickets/
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results
  /
@@ -76,7 +77,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:ag-bristol-tattoo-convention-2026-20260704T110000@bristol-bears-calenda
  r
-DTSTAMP:20260425T154615Z
+DTSTAMP:20260425T160454Z
 DTSTART;TZID=Europe/London:20260704T110000
 DTEND;TZID=Europe/London:20260704T130000
 SUMMARY:[Ashton Gate] Bristol Tattoo Convention 2026
@@ -85,20 +86,6 @@ DESCRIPTION:Ashton Gate Stadium Event\nBristol Tattoo Convention 2026\nDate
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.ashtongatestadium.co.uk/whatson/
 CATEGORIES:Ashton Gate,Stadium Event,Convention
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:ag-break-the-cycle-2026-20260726T080000@bristol-bears-calendar
-DTSTAMP:20260425T154615Z
-DTSTART;TZID=Europe/London:20260726T080000
-DTEND;TZID=Europe/London:20260726T100000
-SUMMARY:[Ashton Gate] Break The Cycle 2026
-DESCRIPTION:Ashton Gate Stadium Event\nBreak The Cycle 2026\nDate: 26 Jul 2
- 026\nMore info: https://www.ashtongatestadium.co.uk/whatson/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.ashtongatestadium.co.uk/whatson/
-CATEGORIES:Ashton Gate,Stadium Event,Charity Event
 STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT

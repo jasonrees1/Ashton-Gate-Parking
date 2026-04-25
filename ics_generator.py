@@ -84,6 +84,8 @@ def _prop(name: str, value: str, params: dict = None) -> str:
 def _fmt_dt(dt: datetime) -> str:
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=TZ)
+    else:
+        dt = dt.astimezone(TZ)
     return dt.strftime("%Y%m%dT%H%M%S")
 
 

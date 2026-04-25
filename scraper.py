@@ -118,8 +118,8 @@ KNOWN_VENUES = {
 
 # HOME FIXTURES ONLY - Bristol Bears at Ashton Gate
 KNOWN_BEARS_FIXTURES = [
-    ('09 May 2026', '15:00', 'Bristol Bears', 'Saracens', 'Gallagher Premiership'),
-    ('30 May 2026', '15:00', 'Bristol Bears', 'Bath Rugby', 'Gallagher Premiership'),
+    ('09 May 2026', '17:30', 'Bristol Bears', 'Saracens', 'Gallagher Premiership'),
+    ('29 May 2026', '19:45', 'Bristol Bears', 'Bath Rugby', 'Gallagher Premiership'),
 ]
 
 # MAJOR EVENTS ONLY - events likely to cause parking disruption around Ashton Gate
@@ -128,7 +128,6 @@ KNOWN_BEARS_FIXTURES = [
 KNOWN_AG_EVENTS = [
     ('25 Apr 2026', '14:15', 'Red Roses vs Wales - Womens Six Nations', 'Sport'),
     ('04 Jul 2026', '11:00', 'Bristol Tattoo Convention 2026', 'Convention'),
-    ('26 Jul 2026', '08:00', 'Break The Cycle 2026', 'Charity Event'),
 ]
 
 # Keywords that indicate a MAJOR event worth including (parking impact likely)
@@ -166,7 +165,7 @@ def is_major_event(title):
     return False
 
 KNOWN_BCFC_FIXTURES = [
-    ('02 May 2026', '11:30', 'Stoke City', 'EFL Championship'),
+    ('02 May 2026', '12:30', 'Stoke City', 'EFL Championship'),
 ]
 
 
@@ -378,8 +377,9 @@ def scrape_bcfc():
                         continue
                     seen.add(uid)
                     end = dt + timedelta(minutes=115)
+                    local_dt = dt.astimezone(TZ)
                     desc = 'Football - %s\nBristol City vs %s\nKick-off: %s' % (
-                        competition, away, dt.strftime('%A %d %B %Y %H:%M'))
+                        competition, away, local_dt.strftime('%A %d %B %Y %H:%M'))
                     events.append(CalendarEvent(
                         uid=uid, title=title, start=dt, end=end,
                         location=BEARS_VENUE, description=desc,
