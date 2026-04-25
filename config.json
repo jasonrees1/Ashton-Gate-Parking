@@ -33,9 +33,9 @@
     "bristol_city": {
       "primary": {
         "name": "BBC Sport",
-        "url": "https://www.bbc.co.uk/sport/football/teams/bristol-city/fixtures",
+        "url": "https://www.bbc.co.uk/sport/football/teams/bristol-city/scores-fixtures",
         "type": "html_scrape",
-        "notes": "Public HTML, no login, stable 10+ years, real-time kick-off updates"
+        "notes": "Public HTML, no login, real-time kick-off updates"
       },
       "fallback": {
         "name": "Soccerway",

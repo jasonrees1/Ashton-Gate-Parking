@@ -118,7 +118,6 @@ KNOWN_VENUES = {
 
 # HOME FIXTURES ONLY - Bristol Bears at Ashton Gate
 KNOWN_BEARS_FIXTURES = [
-    ('17 Apr 2026', '19:45', 'Bristol Bears', 'Gloucester Rugby', 'Gallagher Premiership'),
     ('09 May 2026', '15:00', 'Bristol Bears', 'Saracens', 'Gallagher Premiership'),
     ('30 May 2026', '15:00', 'Bristol Bears', 'Bath Rugby', 'Gallagher Premiership'),
 ]
@@ -167,7 +166,7 @@ def is_major_event(title):
     return False
 
 KNOWN_BCFC_FIXTURES = [
-    ('02 May 2026', '12:30', 'Stoke City', 'EFL Championship'),
+    ('02 May 2026', '11:30', 'Stoke City', 'EFL Championship'),
 ]
 
 
@@ -189,9 +188,10 @@ def bears_event(home, away, competition, start, end):
 
 def get_known_fixtures():
     events = []
+    now = datetime.now(tz=TZ)
     for date_str, time_str, home, away, comp in KNOWN_BEARS_FIXTURES:
         start = parse_dt(date_str, time_str)
-        if not start:
+        if not start or start <= now:
             continue
         end = start + timedelta(minutes=CONFIG['default_match_duration_minutes'])
         events.append(bears_event(home, away, comp, start, end))
@@ -200,9 +200,10 @@ def get_known_fixtures():
 
 def get_known_ashton_gate_events():
     events = []
+    now = datetime.now(tz=TZ)
     for date_str, time_str, title, category in KNOWN_AG_EVENTS:
         start = parse_dt(date_str, time_str)
-        if not start:
+        if not start or start <= now:
             continue
         end = start + timedelta(minutes=CONFIG['default_event_duration_minutes'])
         full_title = '[Ashton Gate] ' + title
@@ -323,49 +324,69 @@ def scrape_bears():
     return events
 
 
+BBC_API_URL = (
+    'https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures'
+    '?selectedEndDate={end}&selectedStartDate={start}'
+    '&todayDate={today}&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city'
+    '&dataVars=selectedEndDate%3D{end}%26selectedStartDate%3D{start}'
+)
+
+
 def scrape_bcfc():
-    soup = fetch(BBC_URL)
-    if not soup:
-        return []
+    import json as _json
     events = []
     seen = set()
     now = datetime.now(tz=TZ)
-    time_el_list = soup.find_all('time')
-    for t in time_el_list:
-        dt_attr = t.get('datetime', '')
-        if not dt_attr:
-            continue
+    today_str = now.strftime('%Y-%m-%d')
+
+    for week in range(16):
+        start_dt = now + timedelta(weeks=week)
+        end_dt = start_dt + timedelta(days=6)
+        url = BBC_API_URL.format(
+            start=start_dt.strftime('%Y-%m-%d'),
+            end=end_dt.strftime('%Y-%m-%d'),
+            today=today_str,
+        )
         try:
-            dt = dateutil_parser.parse(dt_attr)
-            if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=TZ)
-        except Exception:
+            r = SESSION.get(url, timeout=HTTP['timeout_seconds'])
+            r.raise_for_status()
+            data = r.json()
+        except Exception as e:
+            logger.warning('BBC API fetch failed (week %d): %s', week, e)
             continue
-        if dt <= now:
-            continue
-        parent = t.parent
-        for _ in range(5):
-            if parent is None:
-                break
-            text = parent.get_text(separator=' ', strip=True)
-            vs_m = re.search(r'(Bristol City)\s+v\s+([\w\s]+?)(?:\s{2,}|\d|$)', text, re.I)
-            if vs_m:
-                opponent = vs_m.group(2).strip()
-                end = dt + timedelta(minutes=115)
-                title = 'Bristol City vs ' + opponent
-                uid = make_uid('bcfc-live', title, dt)
-                if uid not in seen:
+
+        for group in data.get('eventGroups', []):
+            for sg in group.get('secondaryGroups', []):
+                competition = sg.get('displayLabel', 'EFL Championship')
+                for ev in sg.get('events', []):
+                    home = ev.get('home', {}).get('fullName', '')
+                    away = ev.get('away', {}).get('fullName', '')
+                    if home != 'Bristol City':
+                        continue
+                    start_iso = ev.get('startDateTime', '')
+                    try:
+                        dt = dateutil_parser.parse(start_iso)
+                        if dt.tzinfo is None:
+                            dt = dt.replace(tzinfo=TZ)
+                    except Exception:
+                        continue
+                    if dt <= now:
+                        continue
+                    title = 'Bristol City vs ' + away
+                    uid = make_uid('bcfc-live', title, dt)
+                    if uid in seen:
+                        continue
                     seen.add(uid)
-                    desc = 'Football - EFL Championship\nBristol City vs %s\nKick-off: %s' % (
-                        opponent, dt.strftime('%A %d %B %Y %H:%M'))
+                    end = dt + timedelta(minutes=115)
+                    desc = 'Football - %s\nBristol City vs %s\nKick-off: %s' % (
+                        competition, away, dt.strftime('%A %d %B %Y %H:%M'))
                     events.append(CalendarEvent(
                         uid=uid, title=title, start=dt, end=end,
                         location=BEARS_VENUE, description=desc,
-                        categories=['Football', 'Bristol City', 'EFL Championship'],
+                        categories=['Football', 'Bristol City', competition],
                         url='https://www.bcfc.co.uk/fixtures/',
                     ))
-                break
-            parent = getattr(parent, 'parent', None)
+
     logger.info('BCFC live scrape: %d fixtures', len(events))
     return events
 

@@ -14,7 +14,10 @@ Usage:
 import argparse
 import json
 import logging
+import os
 import sys
+
+os.environ.pop("SSLKEYLOGFILE", None)
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
