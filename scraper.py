@@ -123,18 +123,48 @@ KNOWN_BEARS_FIXTURES = [
     ('30 May 2026', '15:00', 'Bristol Bears', 'Bath Rugby', 'Gallagher Premiership'),
 ]
 
+# MAJOR EVENTS ONLY - events likely to cause parking disruption around Ashton Gate
+# Includes: international sport, concerts, large public shows, conventions, festivals
+# Excludes: corporate seminars, training days, small business events, educational days
 KNOWN_AG_EVENTS = [
     ('25 Apr 2026', '14:15', 'Red Roses vs Wales - Womens Six Nations', 'Sport'),
-    ('27 Apr 2026', '09:00', 'National Apprenticeship and Education Event', 'Event'),
-    ('03 May 2026', '10:00', 'Card Market Bristol', 'Event'),
-    ('14 May 2026', '10:00', 'Play on the Pitch', 'Event'),
-    ('21 May 2026', '09:00', 'Digital NRG Event 2026', 'Event'),
-    ('21 May 2026', '18:30', 'Gala Dinner 2026', 'Event'),
-    ('14 Jun 2026', '09:00', 'Bristol Guitar Show', 'Event'),
-    ('04 Jul 2026', '11:00', 'Bristol Tattoo Convention 2026', 'Event'),
-    ('26 Jul 2026', '08:00', 'Break The Cycle 2026', 'Event'),
-    ('20 Oct 2026', '10:00', 'itSHOWCASE Bristol', 'Event'),
+    ('04 Jul 2026', '11:00', 'Bristol Tattoo Convention 2026', 'Convention'),
+    ('26 Jul 2026', '08:00', 'Break The Cycle 2026', 'Charity Event'),
 ]
+
+# Keywords that indicate a MAJOR event worth including (parking impact likely)
+MAJOR_EVENT_KEYWORDS = [
+    'concert', 'live', 'tour', 'festival', 'gig',
+    'international', 'nations', 'world cup', 'cup final', 'championship final',
+    'convention', 'tattoo', 'comic con', 'expo',
+    'show', 'exhibition',
+    'rugby', 'football', 'cricket', 'boxing', 'ufc', 'mma',
+    'marathon', 'run', 'cycle', 'triathlon', 'race',
+    'graduation', 'ceremony',
+    'red roses', 'england', 'wales', 'scotland', 'ireland',
+]
+
+# Keywords that indicate a MINOR event to exclude (parking impact unlikely)
+MINOR_EVENT_KEYWORDS = [
+    'conference', 'seminar', 'workshop', 'training', 'networking',
+    'apprenticeship', 'education', 'learning', 'skills',
+    'digital', 'tech', 'itshowcase', 'nrg',
+    'dinner', 'gala', 'awards', 'lunch',
+    'market', 'card market', 'craft',
+    'pitch', 'play on the pitch',
+    'guitar show',
+]
+
+
+def is_major_event(title):
+    title_lower = title.lower()
+    for kw in MINOR_EVENT_KEYWORDS:
+        if kw in title_lower:
+            return False
+    for kw in MAJOR_EVENT_KEYWORDS:
+        if kw in title_lower:
+            return True
+    return False
 
 KNOWN_BCFC_FIXTURES = [
     ('02 May 2026', '12:30', 'Stoke City', 'EFL Championship'),
@@ -247,6 +277,9 @@ def scrape_ashton_gate():
             continue
         seen.add(uid)
         desc = 'Ashton Gate Stadium Event\n%s\nMore info: %s' % (title, AG_URL)
+        if not is_major_event(title):
+            logger.debug('Skipping minor event: %s', title)
+            continue
         events.append(CalendarEvent(
             uid=uid, title='[Ashton Gate] ' + title,
             start=start, end=end, location=BEARS_VENUE,
@@ -254,7 +287,7 @@ def scrape_ashton_gate():
             categories=['Ashton Gate', 'Stadium Event'],
             url=AG_URL,
         ))
-    logger.info('Ashton Gate live scrape: %d events', len(events))
+    logger.info('Ashton Gate live scrape: %d major events', len(events))
     return events
 
 
