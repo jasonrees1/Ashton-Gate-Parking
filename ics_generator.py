@@ -5,21 +5,14 @@ ICS Calendar Generator — Pure Python RFC 5545 Implementation
 No external dependencies beyond stdlib. Fully RFC 5545 compliant.
 """
 
-import json
 import logging
 import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
-BASE_DIR = Path(__file__).resolve().parent
-CONFIG_PATH = BASE_DIR / "config.json"
-
-with open(CONFIG_PATH) as f:
-    CONFIG = json.load(f)
+from core import TZ, CONFIG
 
 logger = logging.getLogger("bristol_calendar")
-TZ = ZoneInfo(CONFIG["timezone"])
 
 PRODID = "-//Bristol Bears Calendar//Bristol Bears & Ashton Gate//EN"
 

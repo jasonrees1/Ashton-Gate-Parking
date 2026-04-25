@@ -1,26 +1,19 @@
 #!/usr/bin/env python3
-import json
 import logging
 import logging.handlers
 import re
 import sys
 import time
-from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional
-from zoneinfo import ZoneInfo
 import requests
 from bs4 import BeautifulSoup
 from dateutil import parser as dateutil_parser
 
+from core import CalendarEvent, parse_dt, make_uid, TZ, CONFIG, BEARS_VENUE
+
 BASE_DIR = Path(__file__).resolve().parent
-CONFIG_PATH = BASE_DIR / 'config.json'
 
-with open(CONFIG_PATH) as f:
-    CONFIG = json.load(f)
-
-TZ = ZoneInfo(CONFIG['timezone'])
 HTTP = CONFIG['http']
 
 log_cfg = CONFIG['logging']
@@ -39,19 +32,6 @@ fh = logging.handlers.RotatingFileHandler(
 )
 fh.setFormatter(fmt)
 logger.addHandler(fh)
-
-
-@dataclass
-class CalendarEvent:
-    uid: str
-    title: str
-    start: datetime
-    end: datetime
-    location: str = ''
-    description: str = ''
-    categories: list = field(default_factory=list)
-    url: str = ''
-    status: str = 'CONFIRMED'
 
 
 SESSION = requests.Session()
@@ -77,29 +57,6 @@ def fetch(url):
     return None
 
 
-def parse_dt(date_str, time_str='15:00'):
-    date_str = re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_str.strip())
-    has_year = bool(re.search(r'\b20\d{2}\b', date_str))
-    combined = (date_str + ' ' + time_str).strip()
-    try:
-        dt = dateutil_parser.parse(combined, dayfirst=True, fuzzy=True)
-        now = datetime.now(tz=TZ)
-        if not has_year and dt.year < now.year:
-            dt = dt.replace(year=now.year)
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=TZ)
-        return dt
-    except Exception as e:
-        logger.debug('Date parse failed %r: %s', combined, e)
-        return None
-
-
-def make_uid(prefix, title, start):
-    slug = re.sub(r'[^a-z0-9]', '-', title.lower())[:40]
-    return '%s-%s-%s@bristol-bears-calendar' % (prefix, slug, start.strftime('%Y%m%dT%H%M%S'))
-
-
-BEARS_VENUE = 'Ashton Gate Stadium, Ashton Road, Bristol, BS3 2EJ'
 AG_URL = CONFIG['sources']['ashton_gate']['primary']['url']
 PREM_URL = CONFIG['sources']['bristol_bears']['primary']['url']
 BBC_URL = CONFIG['sources']['bristol_city']['primary']['url']
@@ -123,14 +80,11 @@ KNOWN_BEARS_FIXTURES = [
 ]
 
 # MAJOR EVENTS ONLY - events likely to cause parking disruption around Ashton Gate
-# Includes: international sport, concerts, large public shows, conventions, festivals
-# Excludes: corporate seminars, training days, small business events, educational days
 KNOWN_AG_EVENTS = [
     ('25 Apr 2026', '14:15', 'Red Roses vs Wales - Womens Six Nations', 'Sport'),
     ('04 Jul 2026', '11:00', 'Bristol Tattoo Convention 2026', 'Convention'),
 ]
 
-# Keywords that indicate a MAJOR event worth including (parking impact likely)
 MAJOR_EVENT_KEYWORDS = [
     'concert', 'live', 'tour', 'festival', 'gig',
     'international', 'nations', 'world cup', 'cup final', 'championship final',
@@ -142,7 +96,6 @@ MAJOR_EVENT_KEYWORDS = [
     'red roses', 'england', 'wales', 'scotland', 'ireland',
 ]
 
-# Keywords that indicate a MINOR event to exclude (parking impact unlikely)
 MINOR_EVENT_KEYWORDS = [
     'conference', 'seminar', 'workshop', 'training', 'networking',
     'apprenticeship', 'education', 'learning', 'skills',
@@ -152,6 +105,38 @@ MINOR_EVENT_KEYWORDS = [
     'pitch', 'play on the pitch',
     'guitar show',
 ]
+
+KNOWN_BCFC_FIXTURES = [
+    ('02 May 2026', '12:30', 'Stoke City', 'EFL Championship'),
+]
+
+_TEAM_NAME_MAP = {
+    'west brom': 'West Bromwich Albion',
+    'west bromwich': 'West Bromwich Albion',
+    'sheff utd': 'Sheffield United',
+    'sheff wed': 'Sheffield Wednesday',
+    'sheff wednesday': 'Sheffield Wednesday',
+    'pne': 'Preston North End',
+    'qpr': 'QPR',
+    'man city': 'Manchester City',
+    'man utd': 'Manchester United',
+}
+
+
+def _clean_team_name(name):
+    name = re.sub(r'\s*(TBC|TBA|\d+[-–]\d+)\s*$', '', name.strip(), flags=re.I)
+    return _TEAM_NAME_MAP.get(name.lower(), name)
+
+
+def _extract_competition(text):
+    t = text.lower()
+    if 'fa cup' in t:
+        return 'FA Cup'
+    if 'carabao' in t or 'league cup' in t or 'efl cup' in t:
+        return 'Carabao Cup (EFL Cup)'
+    if 'play-off' in t or 'playoff' in t:
+        return 'EFL Championship Play-Off'
+    return 'EFL Championship'
 
 
 def is_major_event(title):
@@ -163,10 +148,6 @@ def is_major_event(title):
         if kw in title_lower:
             return True
     return False
-
-KNOWN_BCFC_FIXTURES = [
-    ('02 May 2026', '12:30', 'Stoke City', 'EFL Championship'),
-]
 
 
 def bears_event(home, away, competition, start, end):
@@ -309,7 +290,6 @@ def scrape_bears():
             continue
         vs_m = re.search(r'(Bristol Bears)\s+v\s+([\w\s]+?)(?:\s{2,}|$)', line, re.I)
         if vs_m and current_date:
-            # HOME ONLY - Bristol Bears listed first means home
             start = parse_dt(current_date)
             if not start:
                 continue
@@ -332,7 +312,6 @@ BBC_API_URL = (
 
 
 def scrape_bcfc():
-    import json as _json
     events = []
     seen = set()
     now = datetime.now(tz=TZ)
@@ -356,10 +335,10 @@ def scrape_bcfc():
 
         for group in data.get('eventGroups', []):
             for sg in group.get('secondaryGroups', []):
-                competition = sg.get('displayLabel', 'EFL Championship')
+                competition = _extract_competition(sg.get('displayLabel', ''))
                 for ev in sg.get('events', []):
-                    home = ev.get('home', {}).get('fullName', '')
-                    away = ev.get('away', {}).get('fullName', '')
+                    home = _clean_team_name(ev.get('home', {}).get('fullName', ''))
+                    away = _clean_team_name(ev.get('away', {}).get('fullName', ''))
                     if home != 'Bristol City':
                         continue
                     start_iso = ev.get('startDateTime', '')
@@ -391,7 +370,10 @@ def scrape_bcfc():
     return events
 
 
-PHANTOM_TITLES = re.compile(r'(?i)^(\[Ashton Gate\]\s+)?(january|february|march|april|may|june|july|august|september|october|november|december)\s*[0-9]{4}$')
+PHANTOM_TITLES = re.compile(
+    r'(?i)^(\[Ashton Gate\]\s+)?(january|february|march|april|may|june|july|august'
+    r'|september|october|november|december)\s*[0-9]{4}$'
+)
 
 
 def merge(event_lists):
