@@ -14,8 +14,8 @@ on:
     branches:
       - main
     paths:
+      - "core.py"
       - "scraper.py"
-      - "scraper_bcfc.py"
       - "ics_generator.py"
       - "main.py"
       - "config.json"
@@ -29,6 +29,7 @@ jobs:
 
     permissions:
       contents: write
+      issues: write
 
     steps:
       - name: Checkout repository
@@ -52,6 +53,7 @@ jobs:
         run: |
           mkdir -p calendar
           mkdir -p logs
+          mkdir -p diagnostics
 
       - name: Run calendar scraper
         run: |
@@ -97,20 +99,27 @@ jobs:
               print(f'  {dt}  |  {title}')
           "
 
-      - name: Commit and push updated calendar
+      - name: Show diagnostic summary
+        if: always()
+        run: |
+          if [ -f diagnostics/last_run.json ]; then
+            echo "=== Scraper diagnostics ==="
+            cat diagnostics/last_run.json
+          else
+            echo "No diagnostic file found"
+          fi
+
+      - name: Commit and push updated files
         if: github.event.inputs.dry_run != 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Always fetch latest before doing anything
           git fetch origin main
-
-          # Reset to origin/main to avoid any conflict
           git reset --soft origin/main
 
-          # Stage only the calendar file
           git add calendar/bristol_bears_and_ashton_gate.ics
+          [ -f diagnostics/last_run.json ] && git add diagnostics/last_run.json
 
           if git diff --staged --quiet; then
             echo "No changes to commit — calendar is up to date."
@@ -126,6 +135,14 @@ jobs:
             echo "Calendar pushed successfully."
           fi
 
+      - name: Upload diagnostics artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostics
+          path: diagnostics/last_run.json
+          retention-days: 30
+
       - name: Upload ICS as workflow artifact
         if: always() && github.event.inputs.dry_run != 'true'
         uses: actions/upload-artifact@v4
@@ -134,9 +151,62 @@ jobs:
           path: calendar/bristol_bears_and_ashton_gate.ics
           retention-days: 30
 
-      - name: Handle failure
-        if: failure()
+      - name: Create GitHub Issue on failure
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "::error::Calendar update failed! Check the logs above."
-          echo "The existing calendar file has NOT been modified."
-          exit 1
+          DIAG=$(cat diagnostics/last_run.json 2>/dev/null || echo '{"status":"unknown","error":"diagnostic file not written before failure"}')
+
+          # Ensure the label exists
+          gh label create "scraper-failure" \
+            --color "d73a4a" \
+            --description "Automated scraper failure alert" 2>/dev/null || true
+
+          # If an open issue already exists for this label, add a comment instead
+          EXISTING=$(gh issue list --label "scraper-failure" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+
+          if [ -n "$EXISTING" ]; then
+            echo "Open issue #$EXISTING exists — adding comment"
+            gh issue comment "$EXISTING" --body "$(cat <<EOF
+          **Scraper failed again at $TIMESTAMP**
+
+          [View run]($RUN_URL)
+
+          \`\`\`json
+          $DIAG
+          \`\`\`
+          EOF
+          )"
+          else
+            gh issue create \
+              --title "Scraper degraded — $TIMESTAMP" \
+              --label "scraper-failure" \
+              --body "$(cat <<EOF
+          ## Calendar scraper failure
+
+          The daily scraper failed on the scheduled run.
+
+          **Run:** [${{ github.run_id }}]($RUN_URL)
+          **Time:** $TIMESTAMP
+
+          ## Diagnostics
+
+          \`\`\`json
+          $DIAG
+          \`\`\`
+
+          ## What to check
+
+          - [ ] BBC Sport JSON API — URL or response structure changed? Check \`BBC_API_URL\` in \`scraper.py\`
+          - [ ] Bristol Bears website — HTML structure changed? Check \`scrape_bears()\`
+          - [ ] Ashton Gate website — HTML structure changed? Check \`scrape_ashton_gate()\`
+          - [ ] Hardcoded fixture lists expired? Update \`KNOWN_BEARS_FIXTURES\`, \`KNOWN_AG_EVENTS\`, \`KNOWN_BCFC_FIXTURES\` in \`scraper.py\`
+
+          Close this issue once fixed and the next scheduled run passes.
+          EOF
+          )"
+          fi

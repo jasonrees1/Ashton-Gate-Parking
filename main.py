@@ -18,7 +18,7 @@ import os
 import sys
 
 os.environ.pop("SSLKEYLOGFILE", None)
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -35,6 +35,27 @@ from ics_generator import generate_ics
 logger = logging.getLogger("bristol_calendar")
 TZ = ZoneInfo(CONFIG["timezone"])
 
+DIAG_PATH = BASE_DIR / "diagnostics" / "last_run.json"
+_LIVE_SOURCES = ("bears_live", "ag_live", "bcfc_live")
+
+
+def _write_diagnostic(scraper_diag: dict) -> None:
+    run_id = os.environ.get("GITHUB_RUN_ID", "local")
+    repository = os.environ.get("GITHUB_REPOSITORY", "local")
+    run_url = (
+        f"https://github.com/{repository}/actions/runs/{run_id}"
+        if run_id != "local" else "local"
+    )
+    full_diag = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "run_id": run_id,
+        "run_url": run_url,
+        **scraper_diag,
+    }
+    DIAG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    DIAG_PATH.write_text(json.dumps(full_diag, indent=2), encoding="utf-8")
+    logger.info("Diagnostic written to %s", DIAG_PATH)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Bristol Bears & Ashton Gate Calendar Scraper")
@@ -45,35 +66,57 @@ def main():
 
     output_path = args.output or str(BASE_DIR / CONFIG["output"]["ics_file"])
 
-    logger.info(f"Run started at {datetime.now(tz=TZ).strftime('%Y-%m-%d %H:%M:%S %Z')}")
-    logger.info(f"Output path: {output_path}")
+    logger.info("Run started at %s", datetime.now(tz=TZ).strftime("%Y-%m-%d %H:%M:%S %Z"))
+    logger.info("Output path: %s", output_path)
 
     # --- Scrape ---
     try:
-        events = scrape_events()
+        events, scraper_diag = scrape_events()
     except Exception as e:
-        logger.error(f"Scraping failed with exception: {e}", exc_info=True)
+        logger.error("Scraping failed with exception: %s", e, exc_info=True)
+        _write_diagnostic({"status": "exception", "error": str(e), "sources": {}, "warnings": [], "stale_warnings": [], "total_events": 0})
+        sys.exit(1)
+
+    # Always write diagnostic before any exit so the workflow step can read it
+    _write_diagnostic(scraper_diag)
+
+    # Log stale warnings so they appear in the Actions log
+    for w in scraper_diag.get("stale_warnings", []):
+        logger.warning("STALENESS: %s", w)
+
+    # A2: all three live scrapers returned 0 simultaneously → likely a code/URL failure
+    all_live_empty = all(
+        scraper_diag["sources"].get(s, {}).get("events", 0) == 0
+        for s in _LIVE_SOURCES
+    )
+    if all_live_empty:
+        logger.error(
+            "All three live scrapers returned 0 events — possible widespread failure "
+            "(URL changes, API restructure, or network issue). "
+            "Falling back is unsafe; aborting. See diagnostics/last_run.json."
+        )
         sys.exit(1)
 
     if not events:
         logger.error("No events found at all — aborting to preserve existing calendar")
         sys.exit(1)
 
-    logger.info(f"Total events collected: {len(events)}")
+    logger.info("Total events collected: %d", len(events))
 
     # --- Generate ICS ---
     if args.dry_run:
         logger.info("Dry run mode — skipping ICS file write")
-        print(f"✅ Dry run complete. Would write {len(events)} events to {output_path}")
+        print(f"Dry run complete. Would write {len(events)} events to {output_path}")
+        _print_event_summary(events)
         return
 
     try:
-        ics_content = generate_ics(events, output_path)
+        generate_ics(events, output_path)
     except ValueError as e:
-        logger.error(f"ICS validation failed: {e}")
+        logger.error("ICS validation failed: %s", e)
         sys.exit(1)
     except Exception as e:
-        logger.error(f"ICS generation failed: {e}", exc_info=True)
+        logger.error("ICS generation failed: %s", e, exc_info=True)
         sys.exit(1)
 
     # --- Verify ---
@@ -83,50 +126,47 @@ def main():
     # --- Summary ---
     out_file = Path(output_path)
     size_kb = out_file.stat().st_size / 1024
-    logger.info(f"✅ Calendar written: {output_path} ({size_kb:.1f} KB, {len(events)} events)")
-    print(f"\n✅ Success! {len(events)} events written to {output_path} ({size_kb:.1f} KB)")
+    logger.info("Calendar written: %s (%.1f KB, %d events)", output_path, size_kb, len(events))
+    print(f"\nSuccess! {len(events)} events written to {output_path} ({size_kb:.1f} KB)")
+    _print_event_summary(events)
 
-    # Print event summary
+
+def _print_event_summary(events):
     print("\nEvent summary:")
     for ev in events:
         print(f"  {ev.start.strftime('%Y-%m-%d %H:%M')} | {ev.title}")
 
 
 def verify_output(path: str, expected_count: int):
-    """Read back and validate the written ICS file using pure string checks."""
     import re
 
-    logger.info(f"Verifying output: {path}")
+    logger.info("Verifying output: %s", path)
     ics = Path(path).read_text(encoding="utf-8")
 
-    # Count events
     events_found = ics.count("BEGIN:VEVENT")
     if events_found != expected_count:
         logger.warning(
-            f"Verification: expected {expected_count} events, "
-            f"found {events_found} in ICS"
+            "Verification: expected %d events, found %d in ICS",
+            expected_count, events_found,
         )
     else:
-        logger.info(f"Verification passed ✓ — {events_found} events in ICS")
+        logger.info("Verification passed - %d events in ICS", events_found)
 
-    # Check required sections
     for required in ("BEGIN:VCALENDAR", "END:VCALENDAR", "VERSION:2.0",
                      "PRODID:", "BEGIN:VTIMEZONE"):
         if required not in ics:
-            logger.error(f"Missing required ICS section: {required}")
+            logger.error("Missing required ICS section: %s", required)
 
-    # Check every event has UID and DTSTART
     uid_count = len(re.findall(r"^UID:", ics, re.MULTILINE))
-    # DTSTART appears in VTIMEZONE (2x) + each event (1x)
-    dtstart_count = ics.count("DTSTART") - 2
+    dtstart_count = ics.count("DTSTART") - 2  # subtract 2 from VTIMEZONE block
 
     if uid_count != expected_count:
-        logger.warning(f"UID count: {uid_count} vs expected {expected_count}")
+        logger.warning("UID count: %d vs expected %d", uid_count, expected_count)
     if dtstart_count != expected_count:
-        logger.warning(f"DTSTART count: {dtstart_count} vs expected {expected_count}")
+        logger.warning("DTSTART count: %d vs expected %d", dtstart_count, expected_count)
 
     file_size = Path(path).stat().st_size
-    print(f"✅ Verification passed: {events_found} events, {file_size} bytes")
+    print(f"Verification passed: {events_found} events, {file_size} bytes")
 
 
 if __name__ == "__main__":

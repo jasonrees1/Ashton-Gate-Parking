@@ -41,18 +41,32 @@ SESSION.headers.update({
     'Accept-Language': 'en-GB,en;q=0.9',
 })
 
+# Populated during run(); read back to build the diagnostic report.
+_source_details: dict = {}
 
-def fetch(url):
+
+def fetch(url, _diag_key=None):
+    last_exc = None
     for attempt in range(1, HTTP['retry_attempts'] + 1):
         try:
             logger.info('Fetching [%d/%d]: %s', attempt, HTTP['retry_attempts'], url)
             r = SESSION.get(url, timeout=HTTP['timeout_seconds'])
             r.raise_for_status()
+            if _diag_key:
+                _source_details[_diag_key] = {'http_status': r.status_code}
             return BeautifulSoup(r.text, 'lxml')
         except requests.RequestException as e:
+            last_exc = e
             logger.warning('Fetch failed attempt %d: %s', attempt, e)
             if attempt < HTTP['retry_attempts']:
                 time.sleep(HTTP['retry_delay_seconds'])
+    if _diag_key and last_exc is not None:
+        resp = getattr(last_exc, 'response', None)
+        _source_details[_diag_key] = {
+            'http_status': resp.status_code if resp else None,
+            'error': str(last_exc),
+            'response_preview': resp.text[:500] if resp else None,
+        }
     logger.error('All attempts failed for %s', url)
     return None
 
@@ -222,7 +236,7 @@ def get_known_bcfc_fixtures():
 
 
 def scrape_ashton_gate():
-    soup = fetch(AG_URL)
+    soup = fetch(AG_URL, _diag_key='ag_live')
     if not soup:
         return []
     events = []
@@ -273,7 +287,7 @@ def scrape_ashton_gate():
 
 
 def scrape_bears():
-    soup = fetch(PREM_URL)
+    soup = fetch(PREM_URL, _diag_key='bears_live')
     if not soup:
         return []
     events = []
@@ -316,6 +330,9 @@ def scrape_bcfc():
     seen = set()
     now = datetime.now(tz=TZ)
     today_str = now.strftime('%Y-%m-%d')
+    weeks_fetched = 0
+    weeks_failed = 0
+    last_error = None
 
     for week in range(16):
         start_dt = now + timedelta(weeks=week)
@@ -329,7 +346,15 @@ def scrape_bcfc():
             r = SESSION.get(url, timeout=HTTP['timeout_seconds'])
             r.raise_for_status()
             data = r.json()
+            weeks_fetched += 1
         except Exception as e:
+            resp = getattr(e, 'response', None)
+            last_error = {
+                'error': str(e),
+                'http_status': getattr(resp, 'status_code', None),
+                'response_preview': resp.text[:500] if resp else None,
+            }
+            weeks_failed += 1
             logger.warning('BBC API fetch failed (week %d): %s', week, e)
             continue
 
@@ -366,8 +391,35 @@ def scrape_bcfc():
                         url='https://www.bcfc.co.uk/fixtures/',
                     ))
 
+    bcfc_diag = {'weeks_fetched': weeks_fetched, 'weeks_failed': weeks_failed}
+    if last_error:
+        bcfc_diag.update(last_error)
+    _source_details['bcfc_live'] = bcfc_diag
+
     logger.info('BCFC live scrape: %d fixtures', len(events))
     return events
+
+
+def _check_staleness():
+    warnings = []
+    now = datetime.now(tz=TZ)
+    checks = [
+        ('bears_known', KNOWN_BEARS_FIXTURES),
+        ('ag_known', KNOWN_AG_EVENTS),
+        ('bcfc_known', KNOWN_BCFC_FIXTURES),
+    ]
+    for key, fixtures in checks:
+        future = [dt for row in fixtures if (dt := parse_dt(row[0])) and dt > now]
+        if not future:
+            warnings.append(
+                f'{key}: all hardcoded entries have expired — update KNOWN_* list for new season'
+            )
+        elif (max(future) - now).days <= 30:
+            days = (max(future) - now).days
+            warnings.append(
+                f'{key}: last entry expires in {days} day(s) — update list soon'
+            )
+    return warnings
 
 
 PHANTOM_TITLES = re.compile(
@@ -404,21 +456,61 @@ def merge(event_lists):
 
 
 def run():
+    global _source_details
+    _source_details = {}
+
     logger.info('=' * 60)
     logger.info('Bristol Bears, Bristol City and Ashton Gate Calendar')
     logger.info('=' * 60)
+
     bears_live = scrape_bears()
     bears_known = get_known_fixtures()
     ag_live = scrape_ashton_gate()
     ag_known = get_known_ashton_gate_events()
     bcfc_live = scrape_bcfc()
     bcfc_known = get_known_bcfc_fixtures()
+
+    sources = {
+        'bears_live': {'events': len(bears_live), **_source_details.get('bears_live', {})},
+        'bears_known': {'events': len(bears_known)},
+        'ag_live': {'events': len(ag_live), **_source_details.get('ag_live', {})},
+        'ag_known': {'events': len(ag_known)},
+        'bcfc_live': {'events': len(bcfc_live), **_source_details.get('bcfc_live', {})},
+        'bcfc_known': {'events': len(bcfc_known)},
+    }
+
+    warnings = []
+    for key in ('bears_live', 'ag_live', 'bcfc_live'):
+        if sources[key]['events'] == 0:
+            warnings.append(f'{key} returned 0 events — possible scraper failure or end of season')
+        if sources[key].get('error'):
+            warnings.append(f'{key} HTTP error: {sources[key]["error"]}')
+
+    stale_warnings = _check_staleness()
+
     all_events = merge([bears_live, bears_known, ag_live, ag_known, bcfc_live, bcfc_known])
     for ev in all_events:
         logger.info('[%s] %s', ev.start.strftime('%Y-%m-%d %H:%M'), ev.title)
-    return all_events
+
+    live_zeros = sum(1 for k in ('bears_live', 'ag_live', 'bcfc_live') if sources[k]['events'] == 0)
+    if live_zeros == 3:
+        status = 'failed'
+    elif warnings or stale_warnings:
+        status = 'degraded'
+    else:
+        status = 'ok'
+
+    diag = {
+        'sources': sources,
+        'warnings': warnings,
+        'stale_warnings': stale_warnings,
+        'status': status,
+        'total_events': len(all_events),
+    }
+
+    return all_events, diag
 
 
 if __name__ == '__main__':
-    events = run()
+    events, _ = run()
     print('Scraper complete. %d events found.' % len(events))
