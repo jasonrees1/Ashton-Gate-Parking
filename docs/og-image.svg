@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f1729"/>
+      <stop offset="100%" stop-color="#1e0a2e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid lines evoking a car park -->
+  <g opacity="0.06" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="630" x2="600" y2="0"/>
+    <line x1="200" y1="630" x2="800" y2="0"/>
+    <line x1="400" y1="630" x2="1000" y2="0"/>
+    <line x1="600" y1="630" x2="1200" y2="0"/>
+    <line x1="800" y1="630" x2="1400" y2="0"/>
+    <line x1="-200" y1="630" x2="400" y2="0"/>
+  </g>
+
+  <!-- Parking sign circle -->
+  <circle cx="600" cy="195" r="88" fill="#cc2200"/>
+  <circle cx="600" cy="195" r="80" fill="#e02a00"/>
+  <!-- P letter -->
+  <text x="600" y="240" font-family="Arial Black, Impact, sans-serif" font-size="108" font-weight="900" fill="white" text-anchor="middle" dominant-baseline="auto">P</text>
+
+  <!-- Title -->
+  <text x="600" y="358" font-family="Arial Black, Helvetica Neue, sans-serif" font-size="62" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="-1">Bedminster Parking</text>
+  <text x="600" y="430" font-family="Arial Black, Helvetica Neue, sans-serif" font-size="62" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="-1">Heads-Up</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="505" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#9bb5cc" text-anchor="middle">Know before you go · Free calendar subscription</text>
+
+  <!-- Footer stripe -->
+  <rect x="0" y="565" width="1200" height="65" fill="#cc2200" opacity="0.85"/>
+  <text x="600" y="609" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="white" text-anchor="middle" opacity="0.95">Bristol Bears · Bristol City FC · Ashton Gate events</text>
+</svg>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bedminster Parking Heads-Up</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Know when Ashton Gate events will pack the streets. Subscribe to a free calendar that covers Bristol Bears, Bristol City FC, and Ashton Gate events — so parking in Bedminster never catches you off guard.">
+  <meta name="author" content="Bedminster Parking Heads-Up">
+  <link rel="canonical" href="https://jasonrees1.github.io/Ashton-Gate-Parking/">
+
+  <!-- Open Graph (WhatsApp, Facebook, iMessage, NextDoor) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jasonrees1.github.io/Ashton-Gate-Parking/">
+  <meta property="og:title" content="Bedminster Parking Heads-Up">
+  <meta property="og:description" content="Know when Ashton Gate events will pack the streets. Free calendar subscription — Bristol Bears, Bristol City & more.">
+  <meta property="og:image" content="https://jasonrees1.github.io/Ashton-Gate-Parking/og-image.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:site_name" content="Bedminster Parking Heads-Up">
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bedminster Parking Heads-Up">
+  <meta name="twitter:description" content="Free calendar: know when Ashton Gate events mean parking mayhem in Bedminster.">
+  <meta name="twitter:image" content="https://jasonrees1.github.io/Ashton-Gate-Parking/og-image.svg">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #cc2200;
+      --red-dk: #a81c00;
+      --navy:   #0f1729;
+      --navy-m: #1a2540;
+      --text:   #1a1a2e;
+      --muted:  #5a6a82;
+      --border: #dce3ed;
+      --bg:     #f4f7fb;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #1e0a2e 100%);
+      color: #fff;
+      padding: 64px 24px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle car-park grid lines */
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          120deg,
+          rgba(255,255,255,0.04) 0px,
+          rgba(255,255,255,0.04) 1px,
+          transparent 1px,
+          transparent 120px
+        );
+      pointer-events: none;
+    }
+
+    .hero-inner { position: relative; max-width: 640px; margin: 0 auto; }
+
+    .parking-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      background: var(--red);
+      border-radius: 50%;
+      font-size: 44px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 24px rgba(204,34,0,0.5);
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 6vw, 46px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: clamp(15px, 3vw, 18px);
+      color: rgba(255,255,255,0.75);
+      max-width: 480px;
+      margin: 0 auto 32px;
+    }
+
+    /* ── Subscribe button ─────────────────────────────── */
+    .btn-subscribe {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      padding: 14px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.1s;
+      box-shadow: 0 4px 16px rgba(204,34,0,0.45);
+    }
+    .btn-subscribe:hover, .btn-subscribe:focus {
+      background: var(--red-dk);
+      transform: translateY(-1px);
+    }
+    .btn-subscribe:active { transform: translateY(0); }
+
+    .subscribe-note {
+      margin-top: 12px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ── Copy link ────────────────────────────────────── */
+    .copy-row {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .copy-url {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      word-break: break-all;
+      max-width: 100%;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .copy-url:hover { background: rgba(255,255,255,0.14); }
+
+    .copy-btn {
+      flex-shrink: 0;
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.18); }
+
+    /* ── Main content ─────────────────────────────────── */
+    .main { max-width: 720px; margin: 0 auto; padding: 48px 24px 64px; }
+
+    /* ── What's covered cards ─────────────────────────── */
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 18px;
+    }
+
+    .card-icon { font-size: 28px; margin-bottom: 8px; }
+    .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .card p { font-size: 13px; color: var(--muted); }
+
+    /* ── How it works ─────────────────────────────────── */
+    .how-section { margin-bottom: 48px; }
+
+    .steps { list-style: none; counter-reset: steps; }
+    .steps li {
+      counter-increment: steps;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .steps li:last-child { border-bottom: none; }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--navy);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .step-num::before { content: counter(steps); }
+
+    .step-body h4 { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+    .step-body p { font-size: 14px; color: var(--muted); }
+
+    /* ── Share section ────────────────────────────────── */
+    .share-section {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    .share-section h2 { font-size: 18px; margin-bottom: 6px; }
+    .share-section p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+
+    .share-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    .share-btn {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      color: #fff;
+      transition: opacity 0.15s;
+    }
+    .share-btn:hover { opacity: 0.88; }
+    .share-btn.whatsapp { background: #25d366; }
+    .share-btn.facebook { background: #1877f2; }
+    .share-btn.twitter  { background: #000; }
+    .share-btn.copy-link { background: var(--navy); }
+
+    /* ── Footer ───────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: underline; }
+
+    /* ── Toast ────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--navy);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: transform 0.25s;
+      pointer-events: none;
+      z-index: 999;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+
+<body>
+
+<!-- ── Hero ─────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="parking-badge">P</div>
+    <h1>Bedminster Parking Heads-Up</h1>
+    <p>Know when events at Ashton Gate will pack the streets — before you try to park.</p>
+
+    <a class="btn-subscribe"
+       href="webcal://raw.githubusercontent.com/jasonrees1/Ashton-Gate-Parking/main/calendar/bristol_bears_and_ashton_gate.ics">
+      Add to My Calendar
+    </a>
+    <p class="subscribe-note">Works with Google Calendar, Apple Calendar &amp; Outlook</p>
+
+    <div class="copy-row">
+      <span class="copy-url" id="ical-url"
+            onclick="copyUrl()">raw.githubusercontent.com/jasonrees1/Ashton-Gate-Parking/main/calendar/bristol_bears_and_ashton_gate.ics</span>
+      <button class="copy-btn" onclick="copyUrl()" aria-label="Copy calendar URL">Copy URL</button>
+    </div>
+  </div>
+</header>
+
+<!-- ── Main content ──────────────────────────────────────── -->
+<main class="main">
+
+  <!-- What's covered -->
+  <p class="section-label">What's covered</p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🏉</div>
+      <h3>Bristol Bears</h3>
+      <p>Gallagher Premiership home matches at Ashton Gate</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚽</div>
+      <h3>Bristol City FC</h3>
+      <p>EFL Championship home fixtures</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎪</div>
+      <h3>Ashton Gate Events</h3>
+      <p>Concerts, conferences &amp; stadium events</p>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="how-section">
+    <p class="section-label">How it works</p>
+    <ol class="steps">
+      <li>
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Subscribe once</h4>
+          <p>Hit "Add to My Calendar" above. The subscription link is added to your calendar app — one tap, no account needed.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Events appear automatically</h4>
+          <p>Your calendar app syncs daily. New fixtures and events show up without you having to do anything.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Plan ahead</h4>
+          <p>Check your calendar before heading to Bedminster or North Street. Each event shows the date, kick-off time, and venue.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- Share -->
+  <div class="share-section">
+    <h2>Share with your neighbours</h2>
+    <p>Know someone else in BS3 who'd find this useful? Send them the link.</p>
+    <div class="share-btns">
+      <a class="share-btn whatsapp"
+         href="https://wa.me/?text=Handy%20for%20Bedminster%20residents%20%E2%80%94%20free%20calendar%20showing%20when%20Ashton%20Gate%20events%20will%20fill%20the%20streets%3A%20https%3A%2F%2Fjasonrees1.github.io%2FAshton-Gate-Parking%2F"
+         target="_blank" rel="noopener">WhatsApp</a>
+      <a class="share-btn facebook"
+         href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fjasonrees1.github.io%2FAshton-Gate-Parking%2F"
+         target="_blank" rel="noopener">Facebook</a>
+      <a class="share-btn twitter"
+         href="https://twitter.com/intent/tweet?text=Free%20calendar%20for%20Bedminster%20residents%20%E2%80%94%20know%20when%20Ashton%20Gate%20events%20mean%20parking%20chaos&url=https%3A%2F%2Fjasonrees1.github.io%2FAshton-Gate-Parking%2F"
+         target="_blank" rel="noopener">X / Twitter</a>
+      <button class="share-btn copy-link" onclick="copyPageUrl()">Copy page link</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── Footer ────────────────────────────────────────────── -->
+<footer>
+  <p>Updated daily · <a href="https://github.com/jasonrees1/Ashton-Gate-Parking" target="_blank" rel="noopener">View on GitHub</a> · Not affiliated with Bristol Bears, Bristol City FC, or Ashton Gate Stadium</p>
+</footer>
+
+<!-- Toast notification -->
+<div id="toast">Copied!</div>
+
+<script>
+  const ICAL_FULL = "https://raw.githubusercontent.com/jasonrees1/Ashton-Gate-Parking/main/calendar/bristol_bears_and_ashton_gate.ics";
+  const PAGE_URL  = "https://jasonrees1.github.io/Ashton-Gate-Parking/";
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2000);
+  }
+
+  function copyUrl() {
+    navigator.clipboard.writeText(ICAL_FULL).then(() => showToast("Calendar URL copied!"));
+  }
+
+  function copyPageUrl() {
+    navigator.clipboard.writeText(PAGE_URL).then(() => showToast("Link copied!"));
+  }
+</script>
+
+</body>
+</html>
