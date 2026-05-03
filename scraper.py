@@ -121,7 +121,7 @@ MINOR_EVENT_KEYWORDS = [
 ]
 
 KNOWN_BCFC_FIXTURES = [
-    ('02 May 2026', '12:30', 'Stoke City', 'EFL Championship'),
+    # 2025/26 season ended. Add 2026/27 fixtures here when announced (typically June).
 ]
 
 _TEAM_NAME_MAP = {

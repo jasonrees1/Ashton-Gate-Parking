@@ -84,18 +84,27 @@ def main():
     for w in scraper_diag.get("stale_warnings", []):
         logger.warning("STALENESS: %s", w)
 
-    # A2: all three live scrapers returned 0 simultaneously → likely a code/URL failure
+    # A2: all three live scrapers returned 0 simultaneously
     all_live_empty = all(
         scraper_diag["sources"].get(s, {}).get("events", 0) == 0
         for s in _LIVE_SOURCES
     )
     if all_live_empty:
-        logger.error(
-            "All three live scrapers returned 0 events — possible widespread failure "
-            "(URL changes, API restructure, or network issue). "
-            "Falling back is unsafe; aborting. See diagnostics/last_run.json."
-        )
-        sys.exit(1)
+        if events:
+            # Known fallbacks still have future fixtures — likely end of season, not a code failure
+            logger.warning(
+                "All three live scrapers returned 0 events — likely end of season. "
+                "Continuing with %d known fallback event(s). See diagnostics/last_run.json.",
+                len(events),
+            )
+        else:
+            # Nothing anywhere — either widespread scraper failure or genuine off-season
+            logger.error(
+                "All three live scrapers returned 0 events and no known fallbacks have "
+                "future fixtures — possible widespread failure or genuine off-season. "
+                "Aborting to preserve existing calendar. See diagnostics/last_run.json."
+            )
+            sys.exit(1)
 
     if not events:
         logger.error("No events found at all — aborting to preserve existing calendar")
