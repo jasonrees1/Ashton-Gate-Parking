@@ -27,25 +27,9 @@ RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:bears-bristol-bears-vs-saracens-20260509T173000@bristol-bears-calendar
-DTSTAMP:20260509T074617Z
-DTSTART;TZID=Europe/London:20260509T173000
-DTEND;TZID=Europe/London:20260509T192000
-SUMMARY:Bristol Bears vs Saracens
-DESCRIPTION:Rugby - Gallagher Premiership\nBristol Bears vs Saracens\nKick-
- off: Saturday 09 May 2026 17:30\nTickets: https://www.bristolbearsrugby.co
- m/tickets/
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bristolbearsrugby.com/bears-men/first-team/fixtures-results
- /
-CATEGORIES:Rugby,Bristol Bears,Gallagher Premiership
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
 UID:bears-bristol-bears-vs-bath-rugby-20260529T194500@bristol-bears-calenda
  r
-DTSTAMP:20260509T074617Z
+DTSTAMP:20260510T075923Z
 DTSTART;TZID=Europe/London:20260529T194500
 DTEND;TZID=Europe/London:20260529T213500
 SUMMARY:Bristol Bears vs Bath Rugby
@@ -62,7 +46,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:ag-bristol-tattoo-convention-2026-20260704T110000@bristol-bears-calenda
  r
-DTSTAMP:20260509T074617Z
+DTSTAMP:20260510T075923Z
 DTSTART;TZID=Europe/London:20260704T110000
 DTEND;TZID=Europe/London:20260704T130000
 SUMMARY:[Ashton Gate] Bristol Tattoo Convention 2026
