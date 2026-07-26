@@ -27,47 +27,32 @@ RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-swindon-town-20260725T140000@bristol-bears-ca
+UID:bcfc-live-bristol-city-vs-wolverhampton-wanderers-20261104T194500@brist
+ ol-bears-calendar
+DTSTAMP:20260726T081118Z
+DTSTART;TZID=Europe/London:20261104T194500
+DTEND;TZID=Europe/London:20261104T214000
+SUMMARY:Bristol City vs Wolverhampton Wanderers
+DESCRIPTION:Football - EFL Championship\nBristol City vs Wolverhampton Wand
+ erers\nKick-off: Wednesday 04 November 2026 19:45
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.bcfc.co.uk/fixtures/
+CATEGORIES:Football,Bristol City,EFL Championship
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:bcfc-live-bristol-city-vs-norwich-city-20261107T150000@bristol-bears-ca
  lendar
-DTSTAMP:20260725T075246Z
-DTSTART;TZID=Europe/London:20260725T150000
-DTEND;TZID=Europe/London:20260725T165500
-SUMMARY:Bristol City vs Swindon Town
-DESCRIPTION:Football - EFL Championship\nBristol City vs Swindon Town\nKick
- -off: Saturday 25 July 2026 15:00
+DTSTAMP:20260726T081118Z
+DTSTART;TZID=Europe/London:20261107T150000
+DTEND;TZID=Europe/London:20261107T165500
+SUMMARY:Bristol City vs Norwich City
+DESCRIPTION:Football - EFL Championship\nBristol City vs Norwich City\nKick
+ -off: Saturday 07 November 2026 15:00
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bcfc.co.uk/fixtures/
 CATEGORIES:Football,Bristol City,EFL Championship
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-newcastle-united-20260729T183000@bristol-bear
- s-calendar
-DTSTAMP:20260725T075246Z
-DTSTART;TZID=Europe/London:20260729T193000
-DTEND;TZID=Europe/London:20260729T212500
-SUMMARY:Bristol City vs Newcastle United
-DESCRIPTION:Football - EFL Championship\nBristol City vs Newcastle United\n
- Kick-off: Wednesday 29 July 2026 19:30
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bcfc.co.uk/fixtures/
-CATEGORIES:Football,Bristol City,EFL Championship
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-walsall-20260806T184500@bristol-bears-calenda
- r
-DTSTAMP:20260725T075246Z
-DTSTART;TZID=Europe/London:20260806T194500
-DTEND;TZID=Europe/London:20260806T214000
-SUMMARY:Bristol City vs Walsall
-DESCRIPTION:Football - Carabao Cup (EFL Cup)\nBristol City vs Walsall\nKick
- -off: Thursday 06 August 2026 19:45
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bcfc.co.uk/fixtures/
-CATEGORIES:Football,Bristol City,Carabao Cup (EFL Cup)
 STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
