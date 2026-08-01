@@ -27,17 +27,17 @@ RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-portsmouth-20260829T140000@bristol-bears-cale
- ndar
-DTSTAMP:20260728T081911Z
-DTSTART;TZID=Europe/London:20260829T150000
-DTEND;TZID=Europe/London:20260829T165500
-SUMMARY:Bristol City vs Portsmouth
-DESCRIPTION:Football - EFL Championship\nBristol City vs Portsmouth\nKick-o
- ff: Saturday 29 August 2026 15:00
+UID:bcfc-live-bristol-city-vs-walsall-20260806T184500@bristol-bears-calenda
+ r
+DTSTAMP:20260801T080632Z
+DTSTART;TZID=Europe/London:20260806T194500
+DTEND;TZID=Europe/London:20260806T214000
+SUMMARY:Bristol City vs Walsall
+DESCRIPTION:Football - Carabao Cup (EFL Cup)\nBristol City vs Walsall\nKick
+ -off: Thursday 06 August 2026 19:45
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bcfc.co.uk/fixtures/
-CATEGORIES:Football,Bristol City,EFL Championship
+CATEGORIES:Football,Bristol City,Carabao Cup (EFL Cup)
 STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
