@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-08-01T08:06:32.438240+00:00",
-  "run_id": "30691082937",
-  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/30691082937",
+  "timestamp": "2026-08-02T08:08:29.976916+00:00",
+  "run_id": "30739180131",
+  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/30739180131",
   "sources": {
     "bears_live": {
       "events": 0,
@@ -18,10 +18,10 @@
       "events": 0
     },
     "bcfc_live": {
-      "events": 1,
-      "weeks_fetched": 1,
-      "weeks_failed": 15,
-      "error": "400 Client Error: Bad Request for url: https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures?selectedEndDate=2026-11-20&selectedStartDate=2026-11-14&todayDate=2026-08-01&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city&dataVars=selectedEndDate%3D2026-11-20%26selectedStartDate%3D2026-11-14",
+      "events": 2,
+      "weeks_fetched": 2,
+      "weeks_failed": 14,
+      "error": "400 Client Error: Bad Request for url: https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures?selectedEndDate=2026-11-21&selectedStartDate=2026-11-15&todayDate=2026-08-02&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city&dataVars=selectedEndDate%3D2026-11-21%26selectedStartDate%3D2026-11-15",
       "http_status": 400,
       "response_preview": null
     },
@@ -32,7 +32,7 @@
   "warnings": [
     "bears_live returned 0 events \u2014 possible scraper failure or end of season",
     "ag_live returned 0 events \u2014 possible scraper failure or end of season",
-    "bcfc_live HTTP error: 400 Client Error: Bad Request for url: https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures?selectedEndDate=2026-11-20&selectedStartDate=2026-11-14&todayDate=2026-08-01&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city&dataVars=selectedEndDate%3D2026-11-20%26selectedStartDate%3D2026-11-14"
+    "bcfc_live HTTP error: 400 Client Error: Bad Request for url: https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures?selectedEndDate=2026-11-21&selectedStartDate=2026-11-15&todayDate=2026-08-02&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city&dataVars=selectedEndDate%3D2026-11-21%26selectedStartDate%3D2026-11-15"
   ],
   "stale_warnings": [
     "bears_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season",
@@ -40,5 +40,5 @@
     "bcfc_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season"
   ],
   "status": "degraded",
-  "total_events": 1
+  "total_events": 2
 }
