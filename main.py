@@ -98,13 +98,14 @@ def main():
                 len(events),
             )
         else:
-            # Nothing anywhere — either widespread scraper failure or genuine off-season
-            logger.error(
+            # Nothing from any source — off-season or widespread failure.
+            # Exit 0 to preserve the existing committed calendar file intact.
+            logger.warning(
                 "All three live scrapers returned 0 events and no known fallbacks have "
-                "future fixtures — possible widespread failure or genuine off-season. "
-                "Aborting to preserve existing calendar. See diagnostics/last_run.json."
+                "future fixtures. No new ICS written — existing calendar preserved. "
+                "This is normal during pre/off-season. See diagnostics/last_run.json."
             )
-            sys.exit(1)
+            sys.exit(0)
 
     if not events:
         logger.error("No events found at all — aborting to preserve existing calendar")

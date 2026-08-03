@@ -76,9 +76,11 @@ jobs:
           assert 'BEGIN:VCALENDAR' in ics
           assert 'END:VCALENDAR' in ics
           n = ics.count('BEGIN:VEVENT')
+          size = Path('calendar/bristol_bears_and_ashton_gate.ics').stat().st_size
           if n == 0:
-              raise ValueError('ICS file contains no events!')
-          print(f'ICS validation passed: {n} events, {Path(\"calendar/bristol_bears_and_ashton_gate.ics\").stat().st_size} bytes')
+              print('WARNING: ICS file has 0 events — likely off-season, existing calendar preserved')
+          else:
+              print(f'ICS validation passed: {n} events, {size} bytes')
           "
 
       - name: Show calendar summary

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import logging
 import logging.handlers
 import re
@@ -317,12 +318,72 @@ def scrape_bears():
     return events
 
 
+BBC_HTML_URL = 'https://www.bbc.co.uk/sport/football/teams/bristol-city/scores-fixtures'
 BBC_API_URL = (
     'https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures'
     '?selectedEndDate={end}&selectedStartDate={start}'
     '&todayDate={today}&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city'
     '&dataVars=selectedEndDate%3D{end}%26selectedStartDate%3D{start}'
 )
+
+
+def _search_json(obj, depth=0):
+    """Recursively find dicts that look like BBC Sport fixture entries."""
+    if depth > 12:
+        return []
+    results = []
+    if isinstance(obj, dict):
+        has_start = 'startDateTime' in obj or 'startTime' in obj
+        has_home = 'home' in obj or 'homeTeam' in obj
+        has_away = 'away' in obj or 'awayTeam' in obj
+        if has_start and has_home and has_away:
+            results.append(obj)
+        else:
+            for v in obj.values():
+                results.extend(_search_json(v, depth + 1))
+    elif isinstance(obj, list):
+        for item in obj:
+            results.extend(_search_json(item, depth + 1))
+    return results
+
+
+def _parse_bbc_fixture(ev, now, seen):
+    """Parse a BBC Sport fixture dict (widget API or HTML page format) into a CalendarEvent."""
+    home_obj = ev.get('home') or ev.get('homeTeam') or {}
+    away_obj = ev.get('away') or ev.get('awayTeam') or {}
+    home = _clean_team_name(home_obj.get('fullName') or home_obj.get('name', ''))
+    away = _clean_team_name(away_obj.get('fullName') or away_obj.get('name', ''))
+    if home != 'Bristol City':
+        return None
+    start_iso = ev.get('startDateTime') or ev.get('startTime', '')
+    try:
+        dt = dateutil_parser.parse(start_iso)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=TZ)
+    except Exception:
+        return None
+    if dt <= now:
+        return None
+    competition_hint = (
+        (ev.get('stage') or {}).get('competition', {}).get('name', '')
+        or (ev.get('tournament') or {}).get('name', '')
+    )
+    competition = _extract_competition(competition_hint) if competition_hint else 'EFL Championship'
+    title = 'Bristol City vs ' + away
+    uid = make_uid('bcfc-live', title, dt)
+    if uid in seen:
+        return None
+    seen.add(uid)
+    end = dt + timedelta(minutes=115)
+    local_dt = dt.astimezone(TZ)
+    desc = 'Football - %s\nBristol City vs %s\nKick-off: %s' % (
+        competition, away, local_dt.strftime('%A %d %B %Y %H:%M'))
+    return CalendarEvent(
+        uid=uid, title=title, start=dt, end=end,
+        location=BEARS_VENUE, description=desc,
+        categories=['Football', 'Bristol City', competition],
+        url='https://www.bcfc.co.uk/fixtures/',
+    )
 
 
 def scrape_bcfc():
@@ -334,6 +395,37 @@ def scrape_bcfc():
     weeks_failed = 0
     last_error = None
 
+    # --- Primary: BBC Sport HTML page (SSR embeds fixture JSON in __NEXT_DATA__) ---
+    try:
+        r = SESSION.get(
+            BBC_HTML_URL,
+            timeout=HTTP['timeout_seconds'],
+            headers={
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Referer': 'https://www.bbc.co.uk/sport/football',
+            },
+        )
+        r.raise_for_status()
+        soup = BeautifulSoup(r.text, 'lxml')
+        script = soup.find('script', id='__NEXT_DATA__')
+        if script and script.string:
+            data = json.loads(script.string)
+            for fix in _search_json(data):
+                ev = _parse_bbc_fixture(fix, now, seen)
+                if ev:
+                    events.append(ev)
+            logger.info('BBC Sport HTML scrape: %d Bristol City home fixtures', len(events))
+        else:
+            logger.warning('BBC Sport HTML page: __NEXT_DATA__ script not found — falling back to widget API')
+    except Exception as e:
+        logger.warning('BBC Sport HTML scrape failed: %s — falling back to widget API', e)
+
+    # --- Fallback: BBC widget API (weekly chunks) with Referer header ---
+    api_headers = {
+        'Accept': 'application/json, text/plain, */*',
+        'Referer': BBC_HTML_URL,
+        'Origin': 'https://www.bbc.co.uk',
+    }
     for week in range(16):
         start_dt = now + timedelta(weeks=week)
         end_dt = start_dt + timedelta(days=6)
@@ -343,7 +435,7 @@ def scrape_bcfc():
             today=today_str,
         )
         try:
-            r = SESSION.get(url, timeout=HTTP['timeout_seconds'])
+            r = SESSION.get(url, timeout=HTTP['timeout_seconds'], headers=api_headers)
             r.raise_for_status()
             data = r.json()
             weeks_fetched += 1
@@ -355,48 +447,27 @@ def scrape_bcfc():
                 'response_preview': resp.text[:500] if resp else None,
             }
             weeks_failed += 1
-            logger.warning('BBC API fetch failed (week %d): %s', week, e)
+            logger.debug('BBC widget API failed (week %d): %s', week, e)
             continue
 
         for group in data.get('eventGroups', []):
             for sg in group.get('secondaryGroups', []):
-                competition = _extract_competition(sg.get('displayLabel', ''))
                 for ev in sg.get('events', []):
-                    home = _clean_team_name(ev.get('home', {}).get('fullName', ''))
-                    away = _clean_team_name(ev.get('away', {}).get('fullName', ''))
-                    if home != 'Bristol City':
-                        continue
-                    start_iso = ev.get('startDateTime', '')
-                    try:
-                        dt = dateutil_parser.parse(start_iso)
-                        if dt.tzinfo is None:
-                            dt = dt.replace(tzinfo=TZ)
-                    except Exception:
-                        continue
-                    if dt <= now:
-                        continue
-                    title = 'Bristol City vs ' + away
-                    uid = make_uid('bcfc-live', title, dt)
-                    if uid in seen:
-                        continue
-                    seen.add(uid)
-                    end = dt + timedelta(minutes=115)
-                    local_dt = dt.astimezone(TZ)
-                    desc = 'Football - %s\nBristol City vs %s\nKick-off: %s' % (
-                        competition, away, local_dt.strftime('%A %d %B %Y %H:%M'))
-                    events.append(CalendarEvent(
-                        uid=uid, title=title, start=dt, end=end,
-                        location=BEARS_VENUE, description=desc,
-                        categories=['Football', 'Bristol City', competition],
-                        url='https://www.bcfc.co.uk/fixtures/',
-                    ))
+                    parsed = _parse_bbc_fixture(ev, now, seen)
+                    if parsed:
+                        events.append(parsed)
+
+    if weeks_failed == 16:
+        logger.warning('BBC widget API: all 16 weekly requests failed')
+    elif weeks_failed:
+        logger.info('BBC widget API: %d/%d weeks succeeded', weeks_fetched, weeks_fetched + weeks_failed)
 
     bcfc_diag = {'weeks_fetched': weeks_fetched, 'weeks_failed': weeks_failed}
-    if last_error:
+    if last_error and not events:
         bcfc_diag.update(last_error)
     _source_details['bcfc_live'] = bcfc_diag
 
-    logger.info('BCFC live scrape: %d fixtures', len(events))
+    logger.info('BCFC live scrape total: %d fixtures', len(events))
     return events
 
 
