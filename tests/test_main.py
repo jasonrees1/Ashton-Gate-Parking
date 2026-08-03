@@ -45,12 +45,13 @@ def _run_main_dry(events, diag):
 
 
 class TestA2AllEmptyAborts(unittest.TestCase):
-    """When every source (live + known) returns 0 events, main must exit with code 1."""
+    """When every source (live + known) returns 0 events, main exits with code 0
+    so the existing committed calendar is preserved without failing the workflow."""
 
-    def test_exits_with_code_1(self):
+    def test_exits_with_code_0(self):
         with self.assertRaises(SystemExit) as ctx:
             _run_main_dry([], _make_diag())
-        self.assertEqual(ctx.exception.code, 1)
+        self.assertEqual(ctx.exception.code, 0)
 
 
 class TestA2LiveEmptyFallbacksPresent(unittest.TestCase):

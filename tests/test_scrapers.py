@@ -25,6 +25,9 @@ from tests.fixtures import (
     BBC_JSON_AWAY,
     BBC_JSON_PAST,
     BBC_JSON_EMPTY,
+    BBC_HTML_HOME,
+    BBC_HTML_AWAY,
+    BBC_HTML_EMPTY,
     AG_HTML_MAJOR,
     AG_HTML_MINOR,
     AG_HTML_NO_TITLE,
@@ -91,6 +94,61 @@ class TestScrapeBcfc(unittest.TestCase):
         # Even if the same fixture appears in multiple weekly responses,
         # the UID-based dedup must prevent duplicates.
         events = self._run_with_json(BBC_JSON_HOME)
+        uids = [e.uid for e in events]
+        self.assertEqual(len(uids), len(set(uids)))
+
+
+# ── scrape_bcfc() via HTML (__INITIAL_DATA__) ─────────────────────────────────
+
+class TestScrapeBcfcHtml(unittest.TestCase):
+    """Tests for the BBC Sport HTML (window.__INITIAL_DATA__) primary scraping path.
+
+    HTML requests return a page containing __INITIAL_DATA__; API requests fail so
+    that only the HTML path contributes events.
+    """
+
+    def _run_with_html(self, html_text):
+        html_mock = MagicMock()
+        html_mock.raise_for_status.return_value = None
+        html_mock.text = html_text
+
+        api_mock = MagicMock()
+        api_mock.raise_for_status.side_effect = Exception("API unavailable")
+
+        def side_effect(url, **kwargs):
+            return api_mock if "wc-data" in url else html_mock
+
+        with patch("scraper.SESSION") as mock_session:
+            mock_session.get.side_effect = side_effect
+            return scrape_bcfc()
+
+    def test_home_fixture_found(self):
+        events = self._run_with_html(BBC_HTML_HOME)
+        self.assertEqual(len(events), 1)
+
+    def test_home_fixture_title_format(self):
+        events = self._run_with_html(BBC_HTML_HOME)
+        self.assertEqual(events[0].title, "Bristol City vs Stoke City")
+
+    def test_home_fixture_location_is_ashton_gate(self):
+        events = self._run_with_html(BBC_HTML_HOME)
+        self.assertIn("Ashton Gate", events[0].location)
+
+    def test_away_fixture_excluded(self):
+        events = self._run_with_html(BBC_HTML_AWAY)
+        self.assertEqual(len(events), 0)
+
+    def test_empty_event_groups_returns_empty(self):
+        events = self._run_with_html(BBC_HTML_EMPTY)
+        self.assertEqual(events, [])
+
+    def test_missing_initial_data_returns_empty(self):
+        events = self._run_with_html("<html><body>No data here</body></html>")
+        self.assertEqual(events, [])
+
+    def test_no_duplicates_across_two_html_requests(self):
+        # Both HTML pages return the same fixture — UID dedup must collapse to one event.
+        events = self._run_with_html(BBC_HTML_HOME)
         uids = [e.uid for e in events]
         self.assertEqual(len(uids), len(set(uids)))
 

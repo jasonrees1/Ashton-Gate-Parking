@@ -5,6 +5,7 @@ All synthetic events use year 2099 so they never expire.
 FROZEN_NOW is used when tests need to control "now" for fallback-filter logic.
 """
 
+import json as _json
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -104,6 +105,44 @@ BBC_JSON_PAST = {
 
 # Empty response — no fixtures this week
 BBC_JSON_EMPTY = {"eventGroups": []}
+
+# ── BBC Sport HTML page snapshots (window.__INITIAL_DATA__) ───────────────────
+
+def _make_init_data_html(events_list):
+    """Build a minimal BBC Sport HTML page with __INITIAL_DATA__ containing events_list."""
+    data = {
+        "data": {
+            "sport-data-scores-fixtures?selectedEndDate=2099-06-30&selectedStartDate=2099-06-01": {
+                "name": "sport-data-scores-fixtures",
+                "props": {},
+                "data": {
+                    "eventGroups": [{
+                        "displayLabel": "Sunday 15th June 2099",
+                        "secondaryGroups": [{
+                            "displayLabel": "Championship",
+                            "events": events_list,
+                        }],
+                    }],
+                },
+            },
+        },
+    }
+    encoded = _json.dumps(_json.dumps(data))
+    return f"<script>window.__INITIAL_DATA__={encoded};</script>"
+
+BBC_HTML_HOME = _make_init_data_html([{
+    "home": {"fullName": "Bristol City"},
+    "away": {"fullName": "Stoke City"},
+    "startDateTime": "2099-06-15T11:30:00Z",
+}])
+
+BBC_HTML_AWAY = _make_init_data_html([{
+    "home": {"fullName": "Swansea City"},
+    "away": {"fullName": "Bristol City"},
+    "startDateTime": "2099-06-15T11:30:00Z",
+}])
+
+BBC_HTML_EMPTY = _make_init_data_html([])
 
 # ── Ashton Gate HTML snapshots ────────────────────────────────────────────────
 
