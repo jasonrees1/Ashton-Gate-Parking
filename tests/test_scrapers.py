@@ -42,9 +42,19 @@ TZ = ZoneInfo("Europe/London")
 class TestScrapeBcfc(unittest.TestCase):
 
     def _run_with_json(self, json_data):
-        """Run scrape_bcfc() with every BBC API week returning json_data."""
+        """Run scrape_bcfc() where HTML pages have no __INITIAL_DATA__ and
+        BBC widget API weeks return json_data."""
+        html_mock = MagicMock()
+        html_mock.raise_for_status.return_value = None
+        html_mock.text = ""  # no __INITIAL_DATA__ → HTML path yields nothing
+
+        api_mock = make_mock_response(json_data)
+
+        def side_effect(url, **kwargs):
+            return api_mock if "wc-data" in url else html_mock
+
         with patch("scraper.SESSION") as mock_session:
-            mock_session.get.return_value = make_mock_response(json_data)
+            mock_session.get.side_effect = side_effect
             return scrape_bcfc()
 
     def test_home_fixture_included(self):
