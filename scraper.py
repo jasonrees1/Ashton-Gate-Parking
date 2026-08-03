@@ -327,25 +327,6 @@ BBC_API_URL = (
 )
 
 
-def _search_json(obj, depth=0):
-    """Recursively find dicts that look like BBC Sport fixture entries."""
-    if depth > 12:
-        return []
-    results = []
-    if isinstance(obj, dict):
-        has_start = 'startDateTime' in obj or 'startTime' in obj
-        has_home = 'home' in obj or 'homeTeam' in obj
-        has_away = 'away' in obj or 'awayTeam' in obj
-        if has_start and has_home and has_away:
-            results.append(obj)
-        else:
-            for v in obj.values():
-                results.extend(_search_json(v, depth + 1))
-    elif isinstance(obj, list):
-        for item in obj:
-            results.extend(_search_json(item, depth + 1))
-    return results
-
 
 def _parse_bbc_fixture(ev, now, seen):
     """Parse a BBC Sport fixture dict (widget API or HTML page format) into a CalendarEvent."""
@@ -395,30 +376,56 @@ def scrape_bcfc():
     weeks_failed = 0
     last_error = None
 
-    # --- Primary: BBC Sport HTML page (SSR embeds fixture JSON in __NEXT_DATA__) ---
-    try:
-        r = SESSION.get(
-            BBC_HTML_URL,
-            timeout=HTTP['timeout_seconds'],
-            headers={
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Referer': 'https://www.bbc.co.uk/sport/football',
-            },
-        )
-        r.raise_for_status()
-        soup = BeautifulSoup(r.text, 'lxml')
-        script = soup.find('script', id='__NEXT_DATA__')
-        if script and script.string:
-            data = json.loads(script.string)
-            for fix in _search_json(data):
-                ev = _parse_bbc_fixture(fix, now, seen)
-                if ev:
-                    events.append(ev)
-            logger.info('BBC Sport HTML scrape: %d Bristol City home fixtures', len(events))
-        else:
-            logger.warning('BBC Sport HTML page: __NEXT_DATA__ script not found — falling back to widget API')
-    except Exception as e:
-        logger.warning('BBC Sport HTML scrape failed: %s — falling back to widget API', e)
+    # --- Primary: BBC Sport HTML page (SSR embeds data in window.__INITIAL_DATA__) ---
+    # Request the default page (current month) and a shifted page (weeks 5-16) for wider coverage.
+    today_str = now.strftime('%Y-%m-%d')
+    shifted_start = (now + timedelta(weeks=5)).strftime('%Y-%m-%d')
+    shifted_end = (now + timedelta(weeks=16)).strftime('%Y-%m-%d')
+    html_urls = [
+        BBC_HTML_URL,
+        f'{BBC_HTML_URL}?selectedStartDate={shifted_start}&selectedEndDate={shifted_end}&todayDate={today_str}',
+    ]
+    for html_url in html_urls:
+        try:
+            r = SESSION.get(
+                html_url,
+                timeout=HTTP['timeout_seconds'],
+                headers={
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'Referer': 'https://www.bbc.co.uk/sport/football',
+                },
+            )
+            r.raise_for_status()
+        except Exception as e:
+            logger.warning('BBC Sport HTML fetch failed (%s): %s', html_url, e)
+            continue
+
+        # BBC's PWA framework SSR-embeds fixture data in window.__INITIAL_DATA__ (double-JSON-encoded)
+        pos = r.text.find('window.__INITIAL_DATA__=')
+        if pos < 0:
+            logger.warning('BBC Sport HTML page: window.__INITIAL_DATA__ not found')
+            continue
+        pos += len('window.__INITIAL_DATA__=')
+        try:
+            decoder = json.JSONDecoder()
+            outer_str, _ = decoder.raw_decode(r.text[pos:])
+            init_data = json.loads(outer_str)
+        except (json.JSONDecodeError, ValueError) as e:
+            logger.warning('BBC Sport HTML page: failed to parse __INITIAL_DATA__: %s', e)
+            continue
+
+        found = 0
+        for key, src in init_data.get('data', {}).items():
+            if 'sport-data-scores-fixtures' not in key:
+                continue
+            for group in src.get('data', {}).get('eventGroups', []):
+                for sg in group.get('secondaryGroups', []):
+                    for ev_data in sg.get('events', []):
+                        ev = _parse_bbc_fixture(ev_data, now, seen)
+                        if ev:
+                            events.append(ev)
+                            found += 1
+        logger.info('BBC Sport HTML scrape (%s...): %d Bristol City home fixtures', html_url[-40:], found)
 
     # --- Fallback: BBC widget API (weekly chunks) with Referer header ---
     api_headers = {
