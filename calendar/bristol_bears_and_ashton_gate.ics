@@ -29,7 +29,7 @@ END:VTIMEZONE
 BEGIN:VEVENT
 UID:bcfc-live-bristol-city-vs-walsall-20260806T184500@bristol-bears-calenda
  r
-DTSTAMP:20260805T082141Z
+DTSTAMP:20260806T081905Z
 DTSTART;TZID=Europe/London:20260806T194500
 DTEND;TZID=Europe/London:20260806T214000
 SUMMARY:Bristol City vs Walsall
@@ -38,36 +38,6 @@ DESCRIPTION:Football - Carabao Cup (EFL Cup)\nBristol City vs Walsall\nKick
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bcfc.co.uk/fixtures/
 CATEGORIES:Football,Bristol City,Carabao Cup (EFL Cup)
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-millwall-20260815T140000@bristol-bears-calend
- ar
-DTSTAMP:20260805T082141Z
-DTSTART;TZID=Europe/London:20260815T150000
-DTEND;TZID=Europe/London:20260815T165500
-SUMMARY:Bristol City vs Millwall
-DESCRIPTION:Football - EFL Championship\nBristol City vs Millwall\nKick-off
- : Saturday 15 August 2026 15:00
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bcfc.co.uk/fixtures/
-CATEGORIES:Football,Bristol City,EFL Championship
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-portsmouth-20260829T140000@bristol-bears-cale
- ndar
-DTSTAMP:20260805T082141Z
-DTSTART;TZID=Europe/London:20260829T150000
-DTEND;TZID=Europe/London:20260829T165500
-SUMMARY:Bristol City vs Portsmouth
-DESCRIPTION:Football - EFL Championship\nBristol City vs Portsmouth\nKick-o
- ff: Saturday 29 August 2026 15:00
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bcfc.co.uk/fixtures/
-CATEGORIES:Football,Bristol City,EFL Championship
 STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
