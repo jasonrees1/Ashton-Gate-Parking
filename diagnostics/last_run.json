@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-08-11T06:52:14.787986+00:00",
-  "run_id": "31466672043",
-  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/31466672043",
+  "timestamp": "2026-08-12T07:12:02.247078+00:00",
+  "run_id": "31572949950",
+  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/31572949950",
   "sources": {
     "bears_live": {
       "events": 0,
@@ -12,15 +12,17 @@
     },
     "ag_live": {
       "events": 0,
-      "http_status": 200
+      "http_status": null,
+      "error": "404 Client Error: Not Found for url: https://www.ashtongatestadium.co.uk/whatson/",
+      "response_preview": null
     },
     "ag_known": {
       "events": 0
     },
     "bcfc_live": {
-      "events": 3,
-      "weeks_fetched": 3,
-      "weeks_failed": 13
+      "events": 2,
+      "weeks_fetched": 0,
+      "weeks_failed": 16
     },
     "bcfc_known": {
       "events": 0
@@ -28,7 +30,8 @@
   },
   "warnings": [
     "bears_live returned 0 events \u2014 possible scraper failure or end of season",
-    "ag_live returned 0 events \u2014 possible scraper failure or end of season"
+    "ag_live returned 0 events \u2014 possible scraper failure or end of season",
+    "ag_live HTTP error: 404 Client Error: Not Found for url: https://www.ashtongatestadium.co.uk/whatson/"
   ],
   "stale_warnings": [
     "bears_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season",
@@ -36,5 +39,5 @@
     "bcfc_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season"
   ],
   "status": "degraded",
-  "total_events": 3
+  "total_events": 2
 }
