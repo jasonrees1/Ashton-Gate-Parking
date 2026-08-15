@@ -29,27 +29,12 @@ END:VTIMEZONE
 BEGIN:VEVENT
 UID:bcfc-live-bristol-city-vs-millwall-20260815T140000@bristol-bears-calend
  ar
-DTSTAMP:20260814T071206Z
+DTSTAMP:20260815T062245Z
 DTSTART;TZID=Europe/London:20260815T150000
 DTEND;TZID=Europe/London:20260815T165500
 SUMMARY:Bristol City vs Millwall
 DESCRIPTION:Football - EFL Championship\nBristol City vs Millwall\nKick-off
  : Saturday 15 August 2026 15:00
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bcfc.co.uk/fixtures/
-CATEGORIES:Football,Bristol City,EFL Championship
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-portsmouth-20260829T140000@bristol-bears-cale
- ndar
-DTSTAMP:20260814T071206Z
-DTSTART;TZID=Europe/London:20260829T150000
-DTEND;TZID=Europe/London:20260829T165500
-SUMMARY:Bristol City vs Portsmouth
-DESCRIPTION:Football - EFL Championship\nBristol City vs Portsmouth\nKick-o
- ff: Saturday 29 August 2026 15:00
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bcfc.co.uk/fixtures/
 CATEGORIES:Football,Bristol City,EFL Championship
