@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-08-31T12:17:06.877245+00:00",
-  "run_id": "33390954487",
-  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/33390954487",
+  "timestamp": "2026-09-01T10:51:59.635445+00:00",
+  "run_id": "33499527153",
+  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/33499527153",
   "sources": {
     "bears_live": {
       "events": 0,
@@ -20,12 +20,9 @@
       "events": 0
     },
     "bcfc_live": {
-      "events": 0,
-      "weeks_fetched": 0,
-      "weeks_failed": 16,
-      "error": "400 Client Error: Bad Request for url: https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures?selectedEndDate=2026-12-20&selectedStartDate=2026-12-14&todayDate=2026-08-31&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city&dataVars=selectedEndDate%3D2026-12-20%26selectedStartDate%3D2026-12-14",
-      "http_status": 400,
-      "response_preview": null
+      "events": 2,
+      "weeks_fetched": 3,
+      "weeks_failed": 13
     },
     "bcfc_known": {
       "events": 0
@@ -34,15 +31,13 @@
   "warnings": [
     "bears_live returned 0 events \u2014 possible scraper failure or end of season",
     "ag_live returned 0 events \u2014 possible scraper failure or end of season",
-    "ag_live HTTP error: 404 Client Error: Not Found for url: https://www.ashtongatestadium.co.uk/whatson/",
-    "bcfc_live returned 0 events \u2014 possible scraper failure or end of season",
-    "bcfc_live HTTP error: 400 Client Error: Bad Request for url: https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures?selectedEndDate=2026-12-20&selectedStartDate=2026-12-14&todayDate=2026-08-31&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city&dataVars=selectedEndDate%3D2026-12-20%26selectedStartDate%3D2026-12-14"
+    "ag_live HTTP error: 404 Client Error: Not Found for url: https://www.ashtongatestadium.co.uk/whatson/"
   ],
   "stale_warnings": [
     "bears_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season",
     "ag_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season",
     "bcfc_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season"
   ],
-  "status": "failed",
-  "total_events": 0
+  "status": "degraded",
+  "total_events": 2
 }
