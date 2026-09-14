@@ -29,7 +29,7 @@ END:VTIMEZONE
 BEGIN:VEVENT
 UID:bcfc-live-bristol-city-vs-lincoln-city-20260915T184500@bristol-bears-ca
  lendar
-DTSTAMP:20260913T105117Z
+DTSTAMP:20260914T112027Z
 DTSTART;TZID=Europe/London:20260915T194500
 DTEND;TZID=Europe/London:20260915T214000
 SUMMARY:Bristol City vs Lincoln City
@@ -44,42 +44,12 @@ END:VEVENT
 BEGIN:VEVENT
 UID:bcfc-live-bristol-city-vs-watford-20260918T190000@bristol-bears-calenda
  r
-DTSTAMP:20260913T105117Z
+DTSTAMP:20260914T112027Z
 DTSTART;TZID=Europe/London:20260918T200000
 DTEND;TZID=Europe/London:20260918T215500
 SUMMARY:Bristol City vs Watford
 DESCRIPTION:Football - EFL Championship\nBristol City vs Watford\nKick-off:
   Friday 18 September 2026 20:00
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bcfc.co.uk/fixtures/
-CATEGORIES:Football,Bristol City,EFL Championship
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-wolverhampton-wanderers-20261104T200000@brist
- ol-bears-calendar
-DTSTAMP:20260913T105117Z
-DTSTART;TZID=Europe/London:20261104T200000
-DTEND;TZID=Europe/London:20261104T215500
-SUMMARY:Bristol City vs Wolverhampton Wanderers
-DESCRIPTION:Football - EFL Championship\nBristol City vs Wolverhampton Wand
- erers\nKick-off: Wednesday 04 November 2026 20:00
-LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
-URL:https://www.bcfc.co.uk/fixtures/
-CATEGORIES:Football,Bristol City,EFL Championship
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-norwich-city-20261107T123000@bristol-bears-ca
- lendar
-DTSTAMP:20260913T105117Z
-DTSTART;TZID=Europe/London:20261107T123000
-DTEND;TZID=Europe/London:20261107T142500
-SUMMARY:Bristol City vs Norwich City
-DESCRIPTION:Football - EFL Championship\nBristol City vs Norwich City\nKick
- -off: Saturday 07 November 2026 12:30
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bcfc.co.uk/fixtures/
 CATEGORIES:Football,Bristol City,EFL Championship
