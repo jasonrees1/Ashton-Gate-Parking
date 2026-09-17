@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-09-16T10:33:31.219455+00:00",
-  "run_id": "35085609627",
-  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/35085609627",
+  "timestamp": "2026-09-17T10:43:22.292280+00:00",
+  "run_id": "35211936783",
+  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/35211936783",
   "sources": {
     "bears_live": {
       "events": 0,
@@ -19,8 +19,8 @@
     },
     "bcfc_live": {
       "events": 1,
-      "weeks_fetched": 0,
-      "weeks_failed": 16
+      "weeks_fetched": 2,
+      "weeks_failed": 14
     },
     "bcfc_known": {
       "events": 0
