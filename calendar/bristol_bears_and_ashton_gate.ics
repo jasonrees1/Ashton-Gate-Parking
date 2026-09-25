@@ -27,14 +27,14 @@ RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-wrexham-20261124T194500@bristol-bears-calenda
- r
-DTSTAMP:20260922T104022Z
-DTSTART;TZID=Europe/London:20261124T194500
-DTEND;TZID=Europe/London:20261124T214000
-SUMMARY:Bristol City vs Wrexham
-DESCRIPTION:Football - EFL Championship\nBristol City vs Wrexham\nKick-off:
-  Tuesday 24 November 2026 19:45
+UID:bcfc-live-bristol-city-vs-stoke-city-20261229T194500@bristol-bears-cale
+ ndar
+DTSTAMP:20260925T105329Z
+DTSTART;TZID=Europe/London:20261229T194500
+DTEND;TZID=Europe/London:20261229T214000
+SUMMARY:Bristol City vs Stoke City
+DESCRIPTION:Football - EFL Championship\nBristol City vs Stoke City\nKick-o
+ ff: Tuesday 29 December 2026 19:45
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bcfc.co.uk/fixtures/
 CATEGORIES:Football,Bristol City,EFL Championship
@@ -42,14 +42,14 @@ STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
 BEGIN:VEVENT
-UID:bcfc-live-bristol-city-vs-swansea-city-20261205T123000@bristol-bears-ca
- lendar
-DTSTAMP:20260922T104022Z
-DTSTART;TZID=Europe/London:20261205T123000
-DTEND;TZID=Europe/London:20261205T142500
-SUMMARY:Bristol City vs Swansea City
-DESCRIPTION:Football - EFL Championship\nBristol City vs Swansea City\nKick
- -off: Saturday 05 December 2026 12:30
+UID:bcfc-live-bristol-city-vs-west-ham-united-20270101T150000@bristol-bears
+ -calendar
+DTSTAMP:20260925T105329Z
+DTSTART;TZID=Europe/London:20270101T150000
+DTEND;TZID=Europe/London:20270101T165500
+SUMMARY:Bristol City vs West Ham United
+DESCRIPTION:Football - EFL Championship\nBristol City vs West Ham United\nK
+ ick-off: Friday 01 January 2027 15:00
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bcfc.co.uk/fixtures/
 CATEGORIES:Football,Bristol City,EFL Championship
