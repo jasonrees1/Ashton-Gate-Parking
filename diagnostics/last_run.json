@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-09-25T10:53:29.819755+00:00",
-  "run_id": "36126389814",
-  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/36126389814",
+  "timestamp": "2026-09-26T10:33:58.866388+00:00",
+  "run_id": "36236163543",
+  "run_url": "https://github.com/jasonrees1/Ashton-Gate-Parking/actions/runs/36236163543",
   "sources": {
     "bears_live": {
       "events": 0,
@@ -18,9 +18,12 @@
       "events": 0
     },
     "bcfc_live": {
-      "events": 2,
-      "weeks_fetched": 2,
-      "weeks_failed": 14
+      "events": 0,
+      "weeks_fetched": 0,
+      "weeks_failed": 16,
+      "error": "400 Client Error: Bad Request for url: https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures?selectedEndDate=2027-01-15&selectedStartDate=2027-01-09&todayDate=2026-09-26&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city&dataVars=selectedEndDate%3D2027-01-15%26selectedStartDate%3D2027-01-09",
+      "http_status": 400,
+      "response_preview": null
     },
     "bcfc_known": {
       "events": 0
@@ -28,13 +31,15 @@
   },
   "warnings": [
     "bears_live returned 0 events \u2014 possible scraper failure or end of season",
-    "ag_live returned 0 events \u2014 possible scraper failure or end of season"
+    "ag_live returned 0 events \u2014 possible scraper failure or end of season",
+    "bcfc_live returned 0 events \u2014 possible scraper failure or end of season",
+    "bcfc_live HTTP error: 400 Client Error: Bad Request for url: https://www.bbc.co.uk/wc-data/container/sport-data-scores-fixtures?selectedEndDate=2027-01-15&selectedStartDate=2027-01-09&todayDate=2026-09-26&urn=urn%3Abbc%3Asportsdata%3Afootball%3Ateam%3Abristol-city&dataVars=selectedEndDate%3D2027-01-15%26selectedStartDate%3D2027-01-09"
   ],
   "stale_warnings": [
     "bears_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season",
     "ag_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season",
     "bcfc_known: all hardcoded entries have expired \u2014 update KNOWN_* list for new season"
   ],
-  "status": "degraded",
-  "total_events": 2
+  "status": "failed",
+  "total_events": 0
 }
