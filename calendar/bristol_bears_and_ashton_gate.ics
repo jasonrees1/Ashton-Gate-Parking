@@ -29,7 +29,7 @@ END:VTIMEZONE
 BEGIN:VEVENT
 UID:bcfc-live-bristol-city-vs-blackburn-rovers-20261013T184500@bristol-bear
  s-calendar
-DTSTAMP:20261005T130929Z
+DTSTAMP:20261006T123012Z
 DTSTART;TZID=Europe/London:20261013T194500
 DTEND;TZID=Europe/London:20261013T214000
 SUMMARY:Bristol City vs Blackburn Rovers
@@ -44,12 +44,42 @@ END:VEVENT
 BEGIN:VEVENT
 UID:bcfc-live-bristol-city-vs-sheffield-united-20261017T140000@bristol-bear
  s-calendar
-DTSTAMP:20261005T130929Z
+DTSTAMP:20261006T123012Z
 DTSTART;TZID=Europe/London:20261017T150000
 DTEND;TZID=Europe/London:20261017T165500
 SUMMARY:Bristol City vs Sheffield United
 DESCRIPTION:Football - EFL Championship\nBristol City vs Sheffield United\n
  Kick-off: Saturday 17 October 2026 15:00
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.bcfc.co.uk/fixtures/
+CATEGORIES:Football,Bristol City,EFL Championship
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:bcfc-live-bristol-city-vs-wrexham-20261124T194500@bristol-bears-calenda
+ r
+DTSTAMP:20261006T123012Z
+DTSTART;TZID=Europe/London:20261124T194500
+DTEND;TZID=Europe/London:20261124T214000
+SUMMARY:Bristol City vs Wrexham
+DESCRIPTION:Football - EFL Championship\nBristol City vs Wrexham\nKick-off:
+  Tuesday 24 November 2026 19:45
+LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
+URL:https://www.bcfc.co.uk/fixtures/
+CATEGORIES:Football,Bristol City,EFL Championship
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+BEGIN:VEVENT
+UID:bcfc-live-bristol-city-vs-swansea-city-20261205T123000@bristol-bears-ca
+ lendar
+DTSTAMP:20261006T123012Z
+DTSTART;TZID=Europe/London:20261205T123000
+DTEND;TZID=Europe/London:20261205T142500
+SUMMARY:Bristol City vs Swansea City
+DESCRIPTION:Football - EFL Championship\nBristol City vs Swansea City\nKick
+ -off: Saturday 05 December 2026 12:30
 LOCATION:Ashton Gate Stadium\, Ashton Road\, Bristol\, BS3 2EJ
 URL:https://www.bcfc.co.uk/fixtures/
 CATEGORIES:Football,Bristol City,EFL Championship
